@@ -11,10 +11,6 @@ import registerServiceWorker from './registerServiceWorker';
 import Routes from './Routes';
 import './index.css';
 
-const initialState = {
-  comments: []
-};
-
 const history = createHistory();
 const reactRouterMiddleware = routerMiddleware(history);
 
@@ -24,7 +20,6 @@ const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
   reducers,
-  initialState,
   composeEnhancer(applyMiddleware(...middlewares))
 );
 

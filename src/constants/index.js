@@ -1,1 +1,2 @@
 export const GET_COMMENTS = 'GET_COMMENTS';
+export const GET_CATEGORIES = 'GET_CATEGORIES';

@@ -37,9 +37,9 @@ CommentList.propTypes = {
   getAsyncComments: propTypes.func.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = ({ comments }, ownProps) => {
   return {
-    comments: state.comments
+    comments
   };
 };
 
