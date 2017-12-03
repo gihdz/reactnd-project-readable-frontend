@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import comments from './comments.reducer';
-import categories from './categories.reducer';
+import categoryState from './categories.reducer';
 
 const rootReducer = combineReducers({
   comments,
-  categories
+  categoryState
 });
 
 export default rootReducer;

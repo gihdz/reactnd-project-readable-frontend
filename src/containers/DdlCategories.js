@@ -6,50 +6,44 @@ import 'react-select/dist/react-select.css';
 import * as categoriesActions from '../actions/categories.actions';
 
 class Categories extends React.Component {
-  state = {
-    selectedOption: ''
-  };
-  // componentDidMount() {
-  //   fetchCategories().then(cats => {
-  //     const stateCategories = this.state.categories;
-  //     let categories = stateCategories.concat(cats);
-  //     categories = categories.map(c => {
-  //       return { value: c.name, label: c.name };
-  //     });
-  //     this.setState({ categories });
-  //   });
-  // }
   componentDidMount() {
-    this.props.getCategoriesAsyc();
+    this.getCategories();
   }
+  getCategories = () => {
+    this.props.getCategoriesAsync();
+  };
   handleChange = selectedOption => {
-    this.setState({ selectedOption });
+    this.props.setCurrentCategory(selectedOption.label);
     console.log(`Selected: ${selectedOption.label}`);
   };
   render() {
-    let { categories } = this.props;
-    const { selectedOption } = this.state;
-    const selected = selectedOption || 'all';
+    let { categories, selectedCategory } = this.props;
     categories = categories.map(c => {
       return { value: c.name, label: c.name };
     });
     return (
-      <Select
-        name="select-categories"
-        value={selected}
-        onChange={this.handleChange}
-        options={categories}
-      />
+      <div>
+        <Select
+          name="select-categories"
+          value={selectedCategory}
+          onChange={this.handleChange}
+          options={categories}
+        />
+      </div>
     );
   }
 }
 
-const mapStateToProps = ({ categories }, ownProps) => {
-  return { categories };
+const mapStateToProps = ({ categoryState }, ownProps) => {
+  return {
+    categories: categoryState.categories,
+    selectedCategory: categoryState.selectedCategory
+  };
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getCategoriesAsyc: dispatch(categoriesActions.getCategoriesAsync)
+    getCategoriesAsync: dispatch(categoriesActions.getCategoriesAsync),
+    setCurrentCategory: dispatch(categoriesActions.setCurrentCategory)
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Categories);
