@@ -11,7 +11,7 @@ class Posts extends React.Component {
 
   render() {
     const posts = this.props.posts.map(post => (
-      <Post key={post.id} post={post} />
+      <PostRow key={post.id} post={post} />
     ));
     return (
       <div>
@@ -34,7 +34,7 @@ class Posts extends React.Component {
     );
   }
 }
-const Post = ({ post }) => {
+const PostRow = ({ post }) => {
   const {
     id,
     timestamp,
@@ -54,7 +54,7 @@ const Post = ({ post }) => {
       <td>{author}</td>
       <td>{category}</td>
       <td>{voteScore}</td>
-      <td>{deleted}</td>
+      <td>{deleted.toString()}</td>
     </tr>
   );
 };

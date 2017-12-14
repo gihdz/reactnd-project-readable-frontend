@@ -6,9 +6,7 @@ const categoriesState = {
 export default function categoriesReducer(state = categoriesState, action) {
   switch (action.type) {
     case actions.GET_CATEGORIES:
-      const defaulCategoriesValue = { name: 'all', path: 'all' };
-      const categories = [defaulCategoriesValue, ...action.categories];
-      return { ...state, categories };
+      return { ...state, categories: [...action.categories] };
     case actions.SET_SELECTED_CATEGORY:
       return { ...state, selectedCategory: action.selectedCategory };
     default:

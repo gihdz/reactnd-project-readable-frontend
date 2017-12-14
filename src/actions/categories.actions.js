@@ -19,6 +19,8 @@ export const setCurrentCategory = selectedCategory => {
 export const getCategoriesAsync = () => {
   return dispatch => {
     fetchCategories().then(categories => {
+      const defaulCategoriesValue = { name: 'all', path: 'all' };
+      categories = [defaulCategoriesValue, ...categories];
       dispatch({
         type: actions.GET_CATEGORIES,
         categories
