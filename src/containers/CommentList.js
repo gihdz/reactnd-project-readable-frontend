@@ -4,37 +4,28 @@ import propTypes from 'prop-types';
 
 import * as commentActions from '../actions/comments.actions';
 class CommentList extends Component {
-  constructor() {
-    super();
-    this.getComments = this.getComments.bind(this);
+  constructor(props) {
+    super(props);
+    // this.getComments = this.getComments.bind(this);
   }
 
-  getComments() {
-    // return () => {
-    console.log('manin, pero klk');
-    this.props.getAsyncComments();
-    // }
-  }
+  // getComments() {
+  //   console.log('manin, pero klk');
+  //   this.props.getAsyncComments();
+  // }
 
   render() {
-    const commentsLi = this.props.comments.map(c => (
-      <li key={c.id}>{c.text}</li>
-    ));
+    // const commentsLi = this.props.comments.map(c => (
+    //   <li key={c.id}>{c.text}</li>
+    // ));
 
-    return (
-      <div className="comment-list">
-        <ul>{commentsLi}</ul>
-        <button className="get-comments" onClick={this.getComments}>
-          Get Comments
-        </button>
-      </div>
-    );
+    return <div className="redable-comment-list">comments!</div>;
   }
 }
 
 CommentList.propTypes = {
-  comments: propTypes.array.isRequired,
-  getAsyncComments: propTypes.func.isRequired
+  // comments: propTypes.array.isRequired,
+  // getAsyncComments: propTypes.func.isRequired
 };
 
 const mapStateToProps = ({ comments }, ownProps) => {
@@ -45,7 +36,7 @@ const mapStateToProps = ({ comments }, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getAsyncComments: dispatch(commentActions.getAsyncComments)
+    getAsyncComments: () => dispatch(commentActions.getAsyncComments())
   };
 };
 

@@ -1,25 +1,16 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 
-import CommentList from './containers/CommentList';
 import Categories from './containers/DdlCategories';
 import Posts from './containers/Posts';
-
-class App extends Component {
+class RootView extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Readable</h1>
-        </header>
-        <div>
-          <Categories />
-          <Posts />
-        </div>
+      <div>
+        <Categories />
+        <Posts />
       </div>
     );
   }
 }
 
-export default App;
+export default RootView;

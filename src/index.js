@@ -10,7 +10,7 @@ import reducers from './reducers/';
 import registerServiceWorker from './registerServiceWorker';
 import Routes from './Routes';
 import './index.css';
-
+import Layout from './Layout';
 const history = createHistory();
 const reactRouterMiddleware = routerMiddleware(history);
 
@@ -26,7 +26,9 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <Routes />
+      <Layout>
+        <Routes />
+      </Layout>
     </ConnectedRouter>
   </Provider>,
   document.getElementById('root')

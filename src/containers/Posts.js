@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { Link } from 'react-router-dom';
 import * as postActions from '../actions/posts.actions';
 
 class Posts extends React.Component {
@@ -49,7 +49,9 @@ const PostRow = ({ post }) => {
     <tr>
       <td>{id}</td>
       <td>{timestamp}</td>
-      <td>{title}</td>
+      <td>
+        <Link to="/post">{title}</Link>
+      </td>
       <td>{body}</td>
       <td>{author}</td>
       <td>{category}</td>
