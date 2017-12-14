@@ -6,12 +6,13 @@ import 'react-select/dist/react-select.css';
 import * as categoriesActions from '../actions/categories.actions';
 
 class Categories extends React.Component {
-  componentDidMount() {
-    this.getCategories();
-  }
-  getCategories = () => {
-    this.props.getCategoriesAsync();
+  state = {
+    isLoading: true,
+    loadingText: 'loading...'
   };
+  componentDidMount() {
+    this.props.getCategoriesAsync();
+  }
   handleChange = selectedOption => {
     this.props.setCurrentCategory(selectedOption.label);
     console.log(`Selected: ${selectedOption.label}`);
@@ -42,8 +43,9 @@ const mapStateToProps = ({ categoryState }, ownProps) => {
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getCategoriesAsync: dispatch(categoriesActions.getCategoriesAsync),
-    setCurrentCategory: dispatch(categoriesActions.setCurrentCategory)
+    getCategoriesAsync: () => dispatch(categoriesActions.getCategoriesAsync()),
+    setCurrentCategory: category =>
+      dispatch(categoriesActions.setCurrentCategory(category))
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Categories);

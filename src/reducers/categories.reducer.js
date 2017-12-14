@@ -4,8 +4,6 @@ const categoriesState = {
   categories: []
 };
 export default function categoriesReducer(state = categoriesState, action) {
-  // console.log('Categories Reducer state:', state);
-  // console.log('action:', action);
   switch (action.type) {
     case actions.GET_CATEGORIES:
       const defaulCategoriesValue = { name: 'all', path: 'all' };

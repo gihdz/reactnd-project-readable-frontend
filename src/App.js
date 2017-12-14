@@ -4,6 +4,7 @@ import './App.css';
 
 import CommentList from './containers/CommentList';
 import Categories from './containers/DdlCategories';
+import Posts from './containers/Posts';
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
         </header>
         <div>
           <Categories />
+          <Posts />
         </div>
       </div>
     );
