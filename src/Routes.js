@@ -11,7 +11,7 @@ const Routes = () => {
     <Switch>
       <Route exact path="/" component={RootView} />
       <Route path="/custom" component={CustomComponent} />
-      <Route path="/post" component={PostView} />
+      <Route path="/post/:postId" component={PostView} />
 
       <Route component={NotFound} />
     </Switch>

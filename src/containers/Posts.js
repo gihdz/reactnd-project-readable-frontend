@@ -50,7 +50,7 @@ const PostRow = ({ post }) => {
       <td>{id}</td>
       <td>{timestamp}</td>
       <td>
-        <Link to="/post">{title}</Link>
+        <Link to={`/post/${id}`}>{title}</Link>
       </td>
       <td>{body}</td>
       <td>{author}</td>

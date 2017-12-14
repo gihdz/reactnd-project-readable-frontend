@@ -1,5 +1,5 @@
 import * as actions from '../constants';
-import { fetchPosts } from '../utils/api';
+import { fetchPosts, fetchPostById } from '../utils/api';
 
 export const getPosts = (category = 'all') => {
   return dispatch => {
@@ -7,6 +7,16 @@ export const getPosts = (category = 'all') => {
       dispatch({
         type: actions.GET_POSTS,
         posts
+      });
+    });
+  };
+};
+export const getPost = postId => {
+  return dispatch => {
+    fetchPostById(postId).then(post => {
+      dispatch({
+        type: actions.GET_POST,
+        post
       });
     });
   };

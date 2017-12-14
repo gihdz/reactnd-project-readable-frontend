@@ -6,10 +6,18 @@ const getUrl = path => {
 const apiUrls = {
   getCategories: getUrl('categories/'),
   getPosts: getUrl('posts/'),
-  getPostsByCategory: category => getUrl(`${category}/posts`)
+  getPostById: postId => getUrl(`posts/${postId}`),
+  getPostsByCategory: category => getUrl(`${category}/posts`),
+  getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
 };
 
-const { getCategories, getPosts, getPostsByCategory } = apiUrls;
+const {
+  getCategories,
+  getPostById,
+  getPosts,
+  getPostsByCategory,
+  getCommentsByPost
+} = apiUrls;
 
 const authorizationToken = 'GiancarlosReadable';
 var myHeaders = new Headers({
@@ -34,6 +42,22 @@ export function fetchPosts(category) {
     .then(res => res.json())
     .then(res => {
       console.log('Posts: ', res);
+      return res;
+    });
+}
+export function fetchCommentsOfPost(postId) {
+  return fetch(getCommentsByPost(postId), myInit)
+    .then(res => res.json())
+    .then(res => {
+      console.log(`Comments of post ${postId}:`, res);
+      return res;
+    });
+}
+export function fetchPostById(postId) {
+  return fetch(getPostById(postId), myInit)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Post: ', res);
       return res;
     });
 }

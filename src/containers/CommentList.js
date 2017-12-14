@@ -36,7 +36,7 @@ const mapStateToProps = ({ comments }, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getAsyncComments: () => dispatch(commentActions.getAsyncComments())
+    getAsyncComments: () => dispatch(commentActions.getComments())
   };
 };
 

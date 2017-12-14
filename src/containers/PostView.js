@@ -4,10 +4,11 @@ import Comments from './CommentList';
 
 class PostView extends React.Component {
   render() {
+    const { postId } = this.props.match.params;
     return (
       <div className="readable-post_view">
-        <Post />
-        <Comments />
+        <Post postId={postId} />
+        <Comments postId={postId} />
       </div>
     );
   }

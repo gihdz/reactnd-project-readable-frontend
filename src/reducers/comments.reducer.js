@@ -3,7 +3,7 @@ const comments = [];
 
 export default function commentsReducer(state = comments, action) {
   switch (action.type) {
-    case actions.GET_COMMENTS:
+    case actions.GET_POST_COMMENTS:
       return [...state, ...action.comments];
     default:
       return state;
