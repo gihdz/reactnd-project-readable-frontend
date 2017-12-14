@@ -12,8 +12,8 @@ class Post extends React.Component {
     const { title, body } = post;
     return (
       <div className="readable-post">
-        <h4>${title}</h4>
-        <div className="readable-post-body">${body}</div>
+        <h4>{title}</h4>
+        <div className="readable-post-body">{body}</div>
       </div>
     );
   }
