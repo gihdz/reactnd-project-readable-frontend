@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { getPost } from '../actions/posts.actions';
+import Loading from 'react-loading-animation';
 class Post extends React.Component {
   componentDidMount() {
     const { postId } = this.props;
@@ -8,8 +9,10 @@ class Post extends React.Component {
   }
   render() {
     const { post } = this.props;
-    if (!post) return false;
+
+    if (!post) return <Loading />;
     const { title, body } = post;
+
     return (
       <div className="readable-post">
         <h4>{title}</h4>

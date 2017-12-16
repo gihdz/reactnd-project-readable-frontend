@@ -11,13 +11,14 @@ export const getPosts = (category = 'all') => {
     });
   };
 };
-export const getPost = postId => {
+export const getPost = (postId, successCb = null) => {
   return dispatch => {
     fetchPostById(postId).then(post => {
       dispatch({
         type: actions.GET_POST,
         post
       });
+      if (successCb) successCb();
     });
   };
 };
