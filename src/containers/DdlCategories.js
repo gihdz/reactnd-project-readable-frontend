@@ -7,11 +7,10 @@ import * as categoriesActions from '../actions/categories.actions';
 
 class Categories extends React.Component {
   state = {
-    isLoading: true,
-    loadingText: 'loading...'
+    isLoading: true
   };
   componentDidMount() {
-    this.props.getCategoriesAsync();
+    this.props.getCategories();
   }
   handleChange = selectedOption => {
     this.props.setCurrentCategory(selectedOption.label);
@@ -43,7 +42,7 @@ const mapStateToProps = ({ categoryState }, ownProps) => {
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getCategoriesAsync: () => dispatch(categoriesActions.getCategoriesAsync()),
+    getCategories: () => dispatch(categoriesActions.getCategories()),
     setCurrentCategory: category =>
       dispatch(categoriesActions.setCurrentCategory(category))
   };

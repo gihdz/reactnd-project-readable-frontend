@@ -2,14 +2,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as postActions from '../actions/posts.actions';
+import Loading from 'react-loading-animation';
 
 class Posts extends React.Component {
+  state = {
+    loading: true
+  };
   componentDidMount() {
-    const { selectedCategory, getPosts } = this.props;
-    getPosts(selectedCategory);
+    const { getPosts } = this.props;
+    getPosts('all', () => {
+      this.setState({ loading: false });
+    });
   }
 
   render() {
+    const { loading } = this.state;
+    if (loading) return <Loading />;
     const posts = this.props.posts.map(post => (
       <PostRow key={post.id} post={post} />
     ));
@@ -69,7 +77,7 @@ const mapStateToProps = ({ categoryState, postState }, ownProps) => {
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getPosts: () => dispatch(postActions.getPosts())
+    getPosts: (category, cb) => dispatch(postActions.getPosts(category, cb))
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Posts);

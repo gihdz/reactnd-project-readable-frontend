@@ -16,7 +16,7 @@ export const setCurrentCategory = selectedCategory => {
   };
 };
 
-export const getCategoriesAsync = () => {
+export const getCategories = () => {
   return dispatch => {
     fetchCategories().then(categories => {
       const defaulCategoriesValue = { name: 'all', path: 'all' };
