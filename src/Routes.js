@@ -5,13 +5,15 @@ import NotFound from './NotFound';
 import RootView from './App';
 import CustomComponent from './CustomComponent';
 import PostView from './containers/PostView';
+import PostForm from './containers/PostForm';
 
 const Routes = () => {
   return (
     <Switch>
       <Route exact path="/" component={RootView} />
       <Route path="/custom" component={CustomComponent} />
-      <Route path="/post/:postId" component={PostView} />
+      <Route path="/viewPost/:postId" component={PostView} />
+      <Route path="/post/:postId?" component={PostForm} />
 
       <Route component={NotFound} />
     </Switch>

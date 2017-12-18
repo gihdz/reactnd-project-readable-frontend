@@ -25,6 +25,7 @@ class Categories extends React.Component {
       <div>
         <Select
           name="select-categories"
+          className="root-select-category"
           value={selectedCategory}
           onChange={this.handleChange}
           options={categories}

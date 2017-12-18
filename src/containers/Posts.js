@@ -22,18 +22,14 @@ class Posts extends React.Component {
       <PostRow key={post.id} post={post} />
     ));
     return (
-      <div>
-        <table>
+      <div className="table-responsive">
+        <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Id</th>
-              <th>timestamp</th>
               <th>title</th>
               <th>body</th>
               <th>author</th>
-              <th>category</th>
-              <th>vote score</th>
-              <th>deleted</th>
+              <th>timestamp</th>
             </tr>
           </thead>
           <tbody>{posts}</tbody>
@@ -53,18 +49,16 @@ const PostRow = ({ post }) => {
     voteScore,
     deleted
   } = post;
+  const date = new Date(timestamp).toLocaleDateString();
+
   return (
     <tr>
-      <td>{id}</td>
-      <td>{timestamp}</td>
       <td>
-        <Link to={`/post/${id}`}>{title}</Link>
+        <Link to={`/viewPost/${id}`}>{title}</Link>
       </td>
       <td>{body}</td>
       <td>{author}</td>
-      <td>{category}</td>
-      <td>{voteScore}</td>
-      <td>{deleted.toString()}</td>
+      <td>{date}</td>
     </tr>
   );
 };
