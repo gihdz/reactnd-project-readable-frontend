@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "eslint-plugin-jest": "^21.5.0",
+    "formik": "^0.10.5",
     "history": "^4.7.2",
     "prop-types": "^15.6.0",
     "react": "^16.1.1",
@@ -17,12 +19,16 @@
     "react-select": "^1.1.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "yup": "^0.23.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1"
   }
 }
