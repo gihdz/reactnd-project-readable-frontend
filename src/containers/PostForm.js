@@ -11,7 +11,6 @@ import Yup from 'yup';
 class MyPostForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.categories.length > this.props.categories.length) {
-      // console.log('Reseting form');
       this.props.resetForm(nextProps);
     }
   }
@@ -25,13 +24,16 @@ class MyPostForm extends React.Component {
       handleChange,
       handleBlur,
       handleSubmit,
-      handleReset
+      handleReset,
+      handleSelectChange
     } = this.props;
 
     const { title, author, body, category, categories } = values;
-    const cats = categories.filter(c => c.name !== 'all').map(c => {
-      return { value: c.name, label: c.name };
-    });
+    const cats = categories.map(c => (
+      <option key={`opt-${c.name}`} value={c.name}>
+        {c.name}
+      </option>
+    ));
     return (
       <div className="readable-post-form">
         <h3>New Post</h3>
@@ -99,13 +101,14 @@ class MyPostForm extends React.Component {
           </div>
           <div className="form-group">
             <label htmlFor="category">Category</label>
-            <Select
-              name="category"
+            <select
+              className="form-control"
               value={category}
-              onChange={this.handleSelectChange}
-              options={cats}
-              className={errors.category && touched.category ? 'error' : ''}
-            />
+              onChange={handleChange}
+              name="category"
+            >
+              {cats}
+            </select>
             {errors.category &&
               touched.category && (
                 <div className="input-feedback">{errors.category}</div>
@@ -129,19 +132,23 @@ const EnhancedForm = withFormik({
     body: '',
     author: '',
     category: '',
-    categories: props.categories
+    categories: props.categories,
+    history: props.history
   }),
   validationSchema: Yup.object().shape({
     title: Yup.string().required('Title is required!'),
     body: Yup.string().required('Body is required!'),
     author: Yup.string().required('Author is required!'),
-    category: Yup.string() //.required('Category is required!')
+    category: Yup.string().required('Category is required!')
   }),
-  handleSubmit: (values, { setSubmitting, categories }) => {
-    setTimeout(() => {
-      alert(JSON.stringify(values, null, 2));
-      setSubmitting(false);
-    }, 1000);
+  handleSubmit: (values, { setSubmitting }) => {
+    const { title, body, author, category, history } = values;
+    createPost(title, body, author, category.value).then(p => {
+      if (p && p.id) {
+        NotificationManager.success('Post created successfully');
+        history.push('/');
+      }
+    });
   },
   displayName: 'BasicForm' // helps with React DevTools
 })(MyPostForm);
@@ -151,12 +158,21 @@ class FormContainer extends React.Component {
     this.props.getCategories();
   }
   render() {
+    const { categories } = this.props;
+    const filteredCategories = categories.filter(c => c.name !== 'all');
+    const category =
+      filteredCategories.length > 0 ? filteredCategories[0].name : '';
+
+    const { history } = this.props;
+
     return (
       <EnhancedForm
         title=""
         author=""
         body=""
-        categories={this.props.categories}
+        category={category}
+        categories={filteredCategories}
+        history={history}
       />
     );
   }
