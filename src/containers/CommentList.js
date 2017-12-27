@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
 import Loading from 'react-loading-animation';
+import ReactModal from 'react-modal';
 
 import * as commentActions from '../actions/comments.actions';
+
+import CommentForm from './CommentForm';
 class CommentList extends Component {
   state = {
-    loading: true
+    loading: true,
+    isModalOpen: false
   };
   componentDidMount() {
     const { postId } = this.props;
@@ -14,8 +18,15 @@ class CommentList extends Component {
       this.setState({ loading: false });
     });
   }
+  showCommentFormModal = () => {
+    this.setState({ isModalOpen: true });
+  };
+  hideCommentFormModal = () => {
+    this.setState({ isModalOpen: false });
+  };
   render() {
-    const { loading } = this.state;
+    const { loading, isModalOpen } = this.state;
+    const { postId } = this.props;
 
     if (loading) return <Loading />;
 
@@ -25,7 +36,27 @@ class CommentList extends Component {
 
     return (
       <div className="readable-comment-list">
+        <div>
+          <button onClick={this.showCommentFormModal} type="button">
+            Add Comment{' '}
+          </button>
+        </div>
         <ul>{commentsLi} </ul>
+        <ReactModal
+          isOpen={isModalOpen}
+          shouldCloseOnEsc={true}
+          className="Modal"
+          overlayClassName="Overlay"
+          ariaHideApp={false}
+        >
+          <div>
+            <button onClick={this.hideCommentFormModal}>Cancel</button>
+            <CommentForm
+              postId={postId}
+              hideCommentFormModal={this.hideCommentFormModal}
+            />
+          </div>
+        </ReactModal>
       </div>
     );
   }

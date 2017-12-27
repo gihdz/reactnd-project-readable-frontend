@@ -8,6 +8,7 @@ class PostView extends React.Component {
     return (
       <div className="readable-post_view">
         <Post postId={postId} />
+        <hr />
         <Comments postId={postId} />
       </div>
     );
