@@ -6,8 +6,8 @@ import 'react-notifications/lib/notifications.css';
 import { withFormik } from 'formik';
 import Yup from 'yup';
 
-import * as categoriesActions from '../actions/categories.actions';
-import { createPost } from '../utils/api';
+import * as commentsActions from '../actions/comments.actions';
+import { createComment } from '../utils/api';
 
 class CommentForm extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -103,22 +103,21 @@ const EnhancedForm = withFormik({
   }),
   handleSubmit: (values, { props }) => {
     const { body, author, postId } = values;
-    const { hideCommentFormModal } = props;
-    console.log('values', values);
-    hideCommentFormModal();
-    //   createPost(title, body, author, category.value).then(p => {
-    //     if (p && p.id) {
-    //       NotificationManager.success('Post created successfully');
-    //       history.push('/');
-    //     }
-    //   });
+    const { hideCommentFormModal, getComments } = props;
+
+    createComment(postId, author, body).then(d => {
+      if (d && d.id) {
+        NotificationManager.success('Comment created successfully');
+        getComments(postId, hideCommentFormModal);
+      }
+    });
   },
   displayName: 'BasicForm' // helps with React DevTools
 })(CommentForm);
 class FormContainer extends React.Component {
   componentDidMount() {}
   render() {
-    const { postId, hideCommentFormModal } = this.props;
+    const { postId, hideCommentFormModal, getComments } = this.props;
 
     return (
       <EnhancedForm
@@ -126,9 +125,16 @@ class FormContainer extends React.Component {
         body=""
         postId={postId}
         hideCommentFormModal={hideCommentFormModal}
+        getComments={getComments}
       />
     );
   }
 }
 
-export default FormContainer;
+const mapDispatchToProps = dispatch => {
+  return {
+    getComments: (postId, cb) =>
+      dispatch(commentsActions.getComments(postId, cb))
+  };
+};
+export default connect(null, mapDispatchToProps)(FormContainer);

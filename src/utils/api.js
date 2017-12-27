@@ -7,6 +7,7 @@ const getUrl = path => {
 const apiUrls = {
   getCategories: getUrl('categories/'),
   posts: getUrl('posts/'),
+  comments: getUrl('comments/'),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
   getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
@@ -16,6 +17,7 @@ const {
   getCategories,
   getPostById,
   posts,
+  comments,
   getPostsByCategory,
   getCommentsByPost
 } = apiUrls;
@@ -69,6 +71,8 @@ export function createPost(title, body, author, category) {
     body,
     author,
     category,
+    voteScore: 1,
+    deleted: false,
     timestamp: Date.now()
   };
 
@@ -87,6 +91,36 @@ export function createPost(title, body, author, category) {
     .then(res => res.json())
     .then(res => {
       console.log('Created post: ', res);
+      return res;
+    });
+}
+export function createComment(postId, author, body) {
+  const data = {
+    id: uuidv4(),
+    parentId: postId,
+    body,
+    author,
+    voteScore: 1,
+    deleted: false,
+    parentDeleted: false,
+    timestamp: Date.now()
+  };
+
+  const headers = myInit.headers;
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'POST',
+    body: JSON.stringify(data)
+  };
+
+  return fetch(comments, init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Created comment: ', res);
       return res;
     });
 }
