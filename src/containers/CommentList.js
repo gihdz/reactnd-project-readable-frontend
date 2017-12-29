@@ -7,6 +7,7 @@ import ReactModal from 'react-modal';
 import * as commentActions from '../actions/comments.actions';
 
 import CommentForm from './CommentForm';
+import CommentVote from './CommentVote';
 class CommentList extends Component {
   state = {
     loading: true,
@@ -37,10 +38,15 @@ class CommentList extends Component {
     return (
       <div className="readable-comment-list">
         <div>
-          <button onClick={this.showCommentFormModal} type="button">
+          <button
+            className="btn btn-primary"
+            onClick={this.showCommentFormModal}
+            type="button"
+          >
             Add Comment{' '}
           </button>
         </div>
+        <hr />
         <ul>{commentsLi} </ul>
         <ReactModal
           isOpen={isModalOpen}
@@ -50,7 +56,16 @@ class CommentList extends Component {
           ariaHideApp={false}
         >
           <div>
-            <button onClick={this.hideCommentFormModal}>Cancel</button>
+            <button
+              onClick={this.hideCommentFormModal}
+              type="button"
+              className="close"
+              aria-label="Close"
+              style={{ cursor: 'pointer' }}
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+
             <CommentForm
               postId={postId}
               hideCommentFormModal={this.hideCommentFormModal}
@@ -67,7 +82,8 @@ const Comment = ({ comment }) => {
     <li>
       <div className="readable-comment">
         <h5>
-          <strong>{author}</strong> *<small>{voteScore}</small>
+          <strong>{author}</strong>{' '}
+          <CommentVote vote={voteScore} commentId={id} />
         </h5>
         <p className="body">{body}</p>
       </div>

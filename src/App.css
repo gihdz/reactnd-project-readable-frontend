@@ -98,3 +98,16 @@ button.outline {
   bottom: 0;
   background-color: rgba(255, 255, 255, 0.75);
 }
+.btn {
+  cursor: pointer;
+}
+.comment-vote-buttons {
+  /* display: inline-block; */
+  float: right;
+}
+.comment-vote-buttons > .btn-group button:nth-child(2) {
+  cursor: auto;
+  width: 70px;
+  font-weight: 900;
+  font-size: 24px;
+}

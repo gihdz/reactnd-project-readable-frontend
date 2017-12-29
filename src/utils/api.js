@@ -1,5 +1,6 @@
 import uuidv4 from 'uuid/v4';
 const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
+// const apiUrl = 'http://localhost:3001';
 
 const getUrl = path => {
   return `${apiUrl}/${path}`;
@@ -8,6 +9,7 @@ const apiUrls = {
   getCategories: getUrl('categories/'),
   posts: getUrl('posts/'),
   comments: getUrl('comments/'),
+  voteComment: commentId => getUrl(`comments/${commentId}`),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
   getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
@@ -19,14 +21,15 @@ const {
   posts,
   comments,
   getPostsByCategory,
-  getCommentsByPost
+  getCommentsByPost,
+  voteComment
 } = apiUrls;
 
 const authorizationToken = 'GiancarlosReadablev1';
-var myHeaders = new Headers({
+const myHeaders = new Headers({
   Authorization: authorizationToken
 });
-var myInit = {
+const myInit = {
   headers: myHeaders,
   mode: 'cors',
   cache: 'default'
@@ -76,7 +79,7 @@ export function createPost(title, body, author, category) {
     timestamp: Date.now()
   };
 
-  const headers = myInit.headers;
+  const headers = new Headers(myInit.headers);
   headers.append('Accept', 'application/json');
   headers.append('Content-Type', 'application/json');
 
@@ -106,7 +109,7 @@ export function createComment(postId, author, body) {
     timestamp: Date.now()
   };
 
-  const headers = myInit.headers;
+  const headers = new Headers(myInit.headers);
   headers.append('Accept', 'application/json');
   headers.append('Content-Type', 'application/json');
 
@@ -121,6 +124,28 @@ export function createComment(postId, author, body) {
     .then(res => res.json())
     .then(res => {
       console.log('Created comment: ', res);
+      return res;
+    });
+}
+export function voteForComment(commentId, vote) {
+  const data = {
+    option: vote
+  };
+
+  const headers = new Headers(myInit.headers);
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'POST',
+    body: JSON.stringify(data)
+  };
+  return fetch(voteComment(commentId), init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Vote result: ', res);
       return res;
     });
 }

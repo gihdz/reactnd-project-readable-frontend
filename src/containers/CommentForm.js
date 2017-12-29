@@ -36,7 +36,7 @@ class CommentForm extends React.Component {
         <h3>New Comment</h3>
         <hr />
         <form onSubmit={handleSubmit}>
-          <input name="postId" defaultValue={postId} />
+          <input name="postId" type="hidden" defaultValue={postId} />
 
           <div className="form-group">
             <label htmlFor="author">Author</label>
