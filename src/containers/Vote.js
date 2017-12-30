@@ -1,7 +1,7 @@
 import React from 'react';
 import { voteForComment, voteForPost } from '../utils/api';
 import * as commentsActions from '../actions/comments.actions';
-import { getPost } from '../actions/posts.actions';
+import { getPost, getPosts } from '../actions/posts.actions';
 import { connect } from 'react-redux';
 import { VOTE_TYPE } from '../utils/constants';
 import PropTypes from 'prop-types';
@@ -17,7 +17,7 @@ class Vote extends React.Component {
     this.doVote('downVote');
   };
   doVote(vote) {
-    const { id, getPost, getComments, voteType } = this.props;
+    const { id, getPost, getPosts, getComments, voteType } = this.props;
 
     this.setState({ loading: true }, () => {
       switch (voteType) {
@@ -28,9 +28,13 @@ class Vote extends React.Component {
           });
           break;
         case VOTE_TYPE.POST:
+        case VOTE_TYPE.POSTS:
           voteForPost(id, vote).then(r => {
-            if (r && r.id) getPost(id);
-            this.setState({ loading: false });
+            if (r && r.id) {
+              if (voteType === VOTE_TYPE.POST) getPost(id);
+              if (voteType === VOTE_TYPE.POSTS) getPosts(id);
+              this.setState({ loading: false });
+            }
           });
           break;
         default:
@@ -81,7 +85,8 @@ Vote.propTypes = {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     getComments: postId => dispatch(commentsActions.getComments(postId)),
-    getPost: postId => dispatch(getPost(postId))
+    getPost: postId => dispatch(getPost(postId)),
+    getPosts: () => dispatch(getPosts())
   };
 };
 

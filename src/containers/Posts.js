@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as postActions from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
+import Vote from './Vote';
+import { VOTE_TYPE } from '../utils/constants';
 
 class Posts extends React.Component {
   state = {
@@ -26,10 +28,7 @@ class Posts extends React.Component {
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>title</th>
-              <th>body</th>
-              <th>author</th>
-              <th>timestamp</th>
+              <th>info</th>
               <th>actions</th>
             </tr>
           </thead>
@@ -55,11 +54,27 @@ const PostRow = ({ post }) => {
   return (
     <tr>
       <td>
-        <Link to={`/viewPost/${id}`}>{title}</Link>
+        <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
+        <div>
+          <div>Title:</div>
+          <Link to={`/viewPost/${id}`}>{title}</Link>
+        </div>
+        <div>
+          <strong>
+            Author: <span>{author}</span>
+          </strong>
+          ,{' '}
+          <strong>
+            Date: <span>{date}</span>
+          </strong>
+        </div>
+        <div>
+          <div>Body:</div>
+          <Link to={`/viewPost/${id}`}>
+            <pre>{body}</pre>
+          </Link>
+        </div>
       </td>
-      <td>{body}</td>
-      <td>{author}</td>
-      <td>{date}</td>
       <td>
         <Link to={`/post/${id}`}>Edit Post</Link>
       </td>
