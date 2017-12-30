@@ -131,7 +131,7 @@ const EnhancedForm = withFormik({
     title: '',
     body: '',
     author: '',
-    category: '',
+    category: props.category,
     categories: props.categories,
     history: props.history
   }),

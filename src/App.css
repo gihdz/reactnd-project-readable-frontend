@@ -105,6 +105,9 @@ button.outline {
   /* display: inline-block; */
   float: right;
 }
+.comment-vote-buttons.vote-loading {
+  opacity: 0.5;
+}
 .comment-vote-buttons > .btn-group button:nth-child(2) {
   cursor: auto;
   width: 70px;
