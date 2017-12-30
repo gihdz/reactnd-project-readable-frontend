@@ -5,9 +5,10 @@ import Loading from 'react-loading-animation';
 import ReactModal from 'react-modal';
 
 import * as commentActions from '../actions/comments.actions';
+import { VOTE_TYPE } from '../utils/constants';
 
 import CommentForm from './CommentForm';
-import CommentVote from './CommentVote';
+import Vote from './Vote';
 class CommentList extends Component {
   state = {
     loading: true,
@@ -83,7 +84,7 @@ const Comment = ({ comment }) => {
       <div className="readable-comment">
         <h5>
           <strong>{author}</strong>{' '}
-          <CommentVote vote={voteScore} commentId={id} />
+          <Vote vote={voteScore} id={id} voteType={VOTE_TYPE.COMMENT} />
         </h5>
         <p className="body">{body}</p>
       </div>

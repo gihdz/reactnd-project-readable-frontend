@@ -1,31 +1,47 @@
 import React from 'react';
-import { voteForComment } from '../utils/api';
+import { voteForComment, voteForPost } from '../utils/api';
 import * as commentsActions from '../actions/comments.actions';
+import { getPost } from '../actions/posts.actions';
 import { connect } from 'react-redux';
+import { VOTE_TYPE } from '../utils/constants';
+import PropTypes from 'prop-types';
 
-class CommentVote extends React.Component {
+class Vote extends React.Component {
   state = {
     loading: false
   };
   upVote = () => {
-    this.voteComment('upVote');
+    this.doVote('upVote');
   };
   downVote = () => {
-    this.voteComment('downVote');
+    this.doVote('downVote');
   };
-  voteComment(vote) {
-    const { commentId, getComments } = this.props;
+  doVote(vote) {
+    const { id, getPost, getComments, voteType } = this.props;
+
     this.setState({ loading: true }, () => {
-      voteForComment(commentId, vote).then(r => {
-        if (r && r.id) getComments(r.parentId);
-        this.setState({ loading: false });
-      });
+      switch (voteType) {
+        case VOTE_TYPE.COMMENT:
+          voteForComment(id, vote).then(r => {
+            if (r && r.id) getComments(r.parentId);
+            this.setState({ loading: false });
+          });
+          break;
+        case VOTE_TYPE.POST:
+          voteForPost(id, vote).then(r => {
+            if (r && r.id) getPost(id);
+            this.setState({ loading: false });
+          });
+          break;
+        default:
+          this.setState({ loading: false });
+          break;
+      }
     });
   }
   render() {
-    const { vote, commentId } = this.props;
+    const { vote } = this.props;
     const { loading } = this.state;
-
     const voteLoadingClass = loading ? 'vote-loading' : '';
 
     const voteClass = vote < 0 ? 'btn-danger' : 'btn-light';
@@ -57,10 +73,16 @@ class CommentVote extends React.Component {
     );
   }
 }
+Vote.propTypes = {
+  voteType: PropTypes.oneOf(Object.keys(VOTE_TYPE)).isRequired,
+  id: PropTypes.string.isRequired,
+  vote: PropTypes.number.isRequired
+};
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    getComments: postId => dispatch(commentsActions.getComments(postId))
+    getComments: postId => dispatch(commentsActions.getComments(postId)),
+    getPost: postId => dispatch(getPost(postId))
   };
 };
 
-export default connect(null, mapDispatchToProps)(CommentVote);
+export default connect(null, mapDispatchToProps)(Vote);

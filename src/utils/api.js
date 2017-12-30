@@ -10,6 +10,7 @@ const apiUrls = {
   posts: getUrl('posts/'),
   comments: getUrl('comments/'),
   voteComment: commentId => getUrl(`comments/${commentId}`),
+  votePost: postId => getUrl(`posts/${postId}`),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
   getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
@@ -22,7 +23,8 @@ const {
   comments,
   getPostsByCategory,
   getCommentsByPost,
-  voteComment
+  voteComment,
+  votePost
 } = apiUrls;
 
 const authorizationToken = 'GiancarlosReadablev1';
@@ -145,7 +147,29 @@ export function voteForComment(commentId, vote) {
   return fetch(voteComment(commentId), init)
     .then(res => res.json())
     .then(res => {
-      console.log('Vote result: ', res);
+      console.log('Comment vote result: ', res);
+      return res;
+    });
+}
+export function voteForPost(postId, vote) {
+  const data = {
+    option: vote
+  };
+
+  const headers = new Headers(myInit.headers);
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'POST',
+    body: JSON.stringify(data)
+  };
+  return fetch(votePost(postId), init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Post vote result: ', res);
       return res;
     });
 }

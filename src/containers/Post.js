@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getPost } from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
+import Vote from './Vote';
+import { VOTE_TYPE } from '../utils/constants';
 class Post extends React.Component {
   state = {
     loading: true
@@ -18,10 +20,11 @@ class Post extends React.Component {
     if (loading) return <Loading />;
 
     const { post } = this.props;
-    const { title, body } = post;
+    const { title, body, id, voteScore } = post;
 
     return (
       <div className="readable-post">
+        <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POST} />
         <h4 className="title">{title}</h4>
         <div className="body">{body}</div>
       </div>
