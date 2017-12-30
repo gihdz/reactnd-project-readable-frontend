@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
+import { NotificationContainer } from 'react-notifications';
+
 import logo from './logo.svg';
 import './App.css';
-import { NotificationContainer } from 'react-notifications';
+import Nav from './containers/Nav';
 class Layout extends Component {
   render() {
     return (
       <div className="App container-fluid ">
-        <header className="App-header">
-          <h1 className="App-title">Readable</h1>
-        </header>
-        <div className="container">{this.props.children}</div>
+        <div className="container">
+          <Nav />
+          {this.props.children}
+        </div>
         <NotificationContainer />
       </div>
     );
