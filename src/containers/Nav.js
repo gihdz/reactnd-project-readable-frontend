@@ -25,11 +25,11 @@ export default () => (
             Posts
           </Link>
         </li>
-        <li className="nav-item active">
+        {/* <li className="nav-item active">
           <Link to="/post" className="nav-link">
             New Post
           </Link>
-        </li>
+        </li> */}
         {/* <li className="nav-item">
           <a className="nav-link" href="#">
             Link

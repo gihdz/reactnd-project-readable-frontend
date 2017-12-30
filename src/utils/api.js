@@ -11,6 +11,7 @@ const apiUrls = {
   comments: getUrl('comments/'),
   voteComment: commentId => getUrl(`comments/${commentId}`),
   votePost: postId => getUrl(`posts/${postId}`),
+  editPost: postId => getUrl(`posts/${postId}`),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
   getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
@@ -24,7 +25,8 @@ const {
   getPostsByCategory,
   getCommentsByPost,
   voteComment,
-  votePost
+  votePost,
+  editPost
 } = apiUrls;
 
 const authorizationToken = 'GiancarlosReadablev1';
@@ -96,6 +98,30 @@ export function createPost(title, body, author, category) {
     .then(res => res.json())
     .then(res => {
       console.log('Created post: ', res);
+      return res;
+    });
+}
+export function updatePost(postId, title, body) {
+  const data = {
+    title,
+    body
+  };
+
+  const headers = new Headers(myInit.headers);
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'PUT',
+    body: JSON.stringify(data)
+  };
+
+  return fetch(editPost(postId), init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Edited post: ', res);
       return res;
     });
 }

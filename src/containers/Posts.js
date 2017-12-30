@@ -30,6 +30,7 @@ class Posts extends React.Component {
               <th>body</th>
               <th>author</th>
               <th>timestamp</th>
+              <th>actions</th>
             </tr>
           </thead>
           <tbody>{posts}</tbody>
@@ -59,6 +60,9 @@ const PostRow = ({ post }) => {
       <td>{body}</td>
       <td>{author}</td>
       <td>{date}</td>
+      <td>
+        <Link to={`/post/${id}`}>Edit Post</Link>
+      </td>
     </tr>
   );
 };

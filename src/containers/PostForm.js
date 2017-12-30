@@ -2,7 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 import { connect } from 'react-redux';
 import * as categoriesActions from '../actions/categories.actions';
-import { createPost } from '../utils/api';
+import { createPost, fetchPostById, updatePost } from '../utils/api';
 import { NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import { withFormik } from 'formik';
@@ -10,7 +10,10 @@ import Yup from 'yup';
 
 class MyPostForm extends React.Component {
   componentWillReceiveProps(nextProps) {
-    if (nextProps.categories.length > this.props.categories.length) {
+    if (
+      nextProps.categories.length > this.props.categories.length ||
+      this.props.id !== nextProps.id
+    ) {
       this.props.resetForm(nextProps);
     }
   }
@@ -28,109 +31,108 @@ class MyPostForm extends React.Component {
       handleSelectChange
     } = this.props;
 
-    const { title, author, body, category, categories } = values;
+    const { id, title, author, body, category, categories } = values;
     const cats = categories.map(c => (
       <option key={`opt-${c.name}`} value={c.name}>
         {c.name}
       </option>
     ));
+
+    const isEditing = id ? true : false;
     return (
-      <div className="readable-post-form">
-        <h3>New Post</h3>
-        <hr />
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              className={
-                errors.title && touched.title
-                  ? 'form-control error'
-                  : 'form-control'
-              }
-              id="title"
-              name="title"
-              placeholder="Enter title"
-              value={title}
-              onChange={handleChange}
-              ref={input => (this.inputTitle = input)}
-            />
-            {errors.title &&
-              touched.title && (
-                <div className="input-feedback">{errors.title}</div>
-              )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="author">Author</label>
-            <input
-              type="text"
-              className={
-                errors.author && touched.author
-                  ? 'form-control error'
-                  : 'form-control'
-              }
-              id="author"
-              name="author"
-              placeholder="Enter author"
-              value={author}
-              onChange={handleChange}
-            />
-            {errors.author &&
-              touched.author && (
-                <div className="input-feedback">{errors.author}</div>
-              )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="body">Body</label>
-            <textarea
-              type="text"
-              className={
-                errors.body && touched.body
-                  ? 'form-control readable-post-body error'
-                  : 'form-control readable-post-body'
-              }
-              id="body"
-              name="body"
-              value={body}
-              onChange={handleChange}
-            />
-            {errors.body &&
-              touched.body && (
-                <div className="input-feedback">{errors.body}</div>
-              )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="category">Category</label>
-            <select
-              className="form-control"
-              value={category}
-              onChange={handleChange}
-              name="category"
-            >
-              {cats}
-            </select>
-            {errors.category &&
-              touched.category && (
-                <div className="input-feedback">{errors.category}</div>
-              )}
-          </div>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isSubmitting}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="title">Title</label>
+          <input
+            type="text"
+            className={
+              errors.title && touched.title
+                ? 'form-control error'
+                : 'form-control'
+            }
+            id="title"
+            name="title"
+            placeholder="Enter title"
+            value={title}
+            onChange={handleChange}
+            ref={input => (this.inputTitle = input)}
+          />
+          {errors.title &&
+            touched.title && (
+              <div className="input-feedback">{errors.title}</div>
+            )}
+        </div>
+        <div className="form-group">
+          <label htmlFor="author">Author</label>
+          <input
+            type="text"
+            className={
+              errors.author && touched.author
+                ? 'form-control error'
+                : 'form-control'
+            }
+            id="author"
+            name="author"
+            placeholder="Enter author"
+            value={author}
+            onChange={handleChange}
+            disabled={isEditing}
+          />
+          {errors.author &&
+            touched.author && (
+              <div className="input-feedback">{errors.author}</div>
+            )}
+        </div>
+        <div className="form-group">
+          <label htmlFor="body">Body</label>
+          <textarea
+            type="text"
+            className={
+              errors.body && touched.body
+                ? 'form-control readable-post-body error'
+                : 'form-control readable-post-body'
+            }
+            id="body"
+            name="body"
+            value={body}
+            onChange={handleChange}
+          />
+          {errors.body &&
+            touched.body && <div className="input-feedback">{errors.body}</div>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="category">Category</label>
+          <select
+            className="form-control"
+            value={category}
+            onChange={handleChange}
+            name="category"
+            disabled={isEditing}
           >
-            Submit
-          </button>
-        </form>
-      </div>
+            {cats}
+          </select>
+          {errors.category &&
+            touched.category && (
+              <div className="input-feedback">{errors.category}</div>
+            )}
+        </div>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isSubmitting}
+        >
+          Submit
+        </button>
+      </form>
     );
   }
 }
 const EnhancedForm = withFormik({
   mapPropsToValues: props => ({
-    title: '',
-    body: '',
-    author: '',
+    id: props.id,
+    title: props.title,
+    body: props.body,
+    author: props.author,
     category: props.category,
     categories: props.categories,
     history: props.history
@@ -142,38 +144,73 @@ const EnhancedForm = withFormik({
     category: Yup.string().required('Category is required!')
   }),
   handleSubmit: (values, { setSubmitting }) => {
-    const { title, body, author, category, history } = values;
-    createPost(title, body, author, category.value).then(p => {
-      if (p && p.id) {
-        NotificationManager.success('Post created successfully');
-        history.push('/');
-      }
-    });
+    const { id, title, body, author, category, history } = values;
+    if (!id)
+      createPost(title, body, author, category.value).then(p => {
+        if (p && p.id) {
+          NotificationManager.success('Post created successfully');
+          history.push('/');
+        }
+      });
+    else
+      updatePost(id, title, body).then(p => {
+        if (p && p.id) {
+          NotificationManager.success('Post edited successfully');
+          history.push('/');
+        }
+      });
   },
   displayName: 'BasicForm' // helps with React DevTools
 })(MyPostForm);
 
 class FormContainer extends React.Component {
+  state = {
+    formTitle: '',
+    id: '',
+    title: '',
+    author: '',
+    body: '',
+    category: ''
+  };
   componentDidMount() {
-    this.props.getCategories();
+    const { postId } = this.props.match.params;
+    if (postId)
+      fetchPostById(postId).then(r => {
+        if (r && r.id) {
+          this.setState(
+            { ...r, formTitle: 'Edit Post' },
+            this.props.getCategories
+          );
+        }
+      });
+    else this.setState({ formTitle: 'New Post' }, this.props.getCategories);
   }
   render() {
     const { categories } = this.props;
+    const { id, title, author, body, category, formTitle } = this.state;
+
     const filteredCategories = categories.filter(c => c.name !== 'all');
-    const category =
-      filteredCategories.length > 0 ? filteredCategories[0].name : '';
+
+    let cat = category;
+    if (!cat)
+      cat = filteredCategories.length > 0 ? filteredCategories[0].name : '';
 
     const { history } = this.props;
 
     return (
-      <EnhancedForm
-        title=""
-        author=""
-        body=""
-        category={category}
-        categories={filteredCategories}
-        history={history}
-      />
+      <div className="readable-post-form">
+        <h3>{formTitle}</h3>
+        <hr />
+        <EnhancedForm
+          id={id}
+          title={title}
+          author={author}
+          body={body}
+          category={cat}
+          categories={filteredCategories}
+          history={history}
+        />
+      </div>
     );
   }
 }
