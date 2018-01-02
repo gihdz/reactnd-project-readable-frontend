@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
-// const apiUrl = 'http://localhost:3001';
+// const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
+const apiUrl = 'http://localhost:3001';
 
 const getUrl = path => {
   return `${apiUrl}/${path}`;
@@ -9,9 +9,11 @@ const apiUrls = {
   getCategories: getUrl('categories/'),
   posts: getUrl('posts/'),
   comments: getUrl('comments/'),
+  getCommentById: commentId => getUrl(`comments/${commentId}`),
   voteComment: commentId => getUrl(`comments/${commentId}`),
   votePost: postId => getUrl(`posts/${postId}`),
   editPost: postId => getUrl(`posts/${postId}`),
+  editComment: postId => getUrl(`comments/${postId}`),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
   getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
@@ -26,7 +28,9 @@ const {
   getCommentsByPost,
   voteComment,
   votePost,
-  editPost
+  editPost,
+  editComment,
+  getCommentById
 } = apiUrls;
 
 const authorizationToken = 'GiancarlosReadablev1';
@@ -68,6 +72,14 @@ export function fetchPostById(postId) {
     .then(res => res.json())
     .then(res => {
       console.log('Post: ', res);
+      return res;
+    });
+}
+export function fetchCommentById(commentId) {
+  return fetch(getCommentById(commentId), myInit)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Comment: ', res);
       return res;
     });
 }
@@ -122,6 +134,30 @@ export function updatePost(postId, title, body) {
     .then(res => res.json())
     .then(res => {
       console.log('Edited post: ', res);
+      return res;
+    });
+}
+export function updateComment(commentId, body) {
+  const data = {
+    body,
+    timestamp: Date.now()
+  };
+
+  const headers = new Headers(myInit.headers);
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'PUT',
+    body: JSON.stringify(data)
+  };
+
+  return fetch(editComment(commentId), init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Edited comment: ', res);
       return res;
     });
 }

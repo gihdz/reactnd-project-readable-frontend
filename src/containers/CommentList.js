@@ -12,7 +12,8 @@ import Vote from './Vote';
 class CommentList extends Component {
   state = {
     loading: true,
-    isModalOpen: false
+    isModalOpen: false,
+    currentComment: ''
   };
   componentDidMount() {
     const { postId } = this.props;
@@ -20,21 +21,30 @@ class CommentList extends Component {
       this.setState({ loading: false });
     });
   }
+  setCurrentComment = currentComment => {
+    this.setState({ currentComment, isModalOpen: true });
+  };
   showCommentFormModal = () => {
     this.setState({ isModalOpen: true });
   };
   hideCommentFormModal = () => {
-    this.setState({ isModalOpen: false });
+    this.setState({ isModalOpen: false, currentComment: '' });
   };
   render() {
-    const { loading, isModalOpen } = this.state;
+    const { loading, isModalOpen, currentComment } = this.state;
     const { postId } = this.props;
 
     if (loading) return <Loading />;
 
     const { comments } = this.props;
 
-    const commentsLi = comments.map(c => <Comment key={c.id} comment={c} />);
+    const commentsLi = comments.map(c => (
+      <Comment
+        key={c.id}
+        comment={c}
+        setCurrentComment={() => this.setCurrentComment(c.id)}
+      />
+    ));
 
     return (
       <div className="readable-comment-list">
@@ -48,7 +58,7 @@ class CommentList extends Component {
           </button>
         </div>
         <hr />
-        <ul>{commentsLi} </ul>
+        <ul className="list">{commentsLi} </ul>
         <ReactModal
           isOpen={isModalOpen}
           shouldCloseOnEsc={true}
@@ -70,6 +80,7 @@ class CommentList extends Component {
             <CommentForm
               postId={postId}
               hideCommentFormModal={this.hideCommentFormModal}
+              commentId={currentComment}
             />
           </div>
         </ReactModal>
@@ -77,16 +88,24 @@ class CommentList extends Component {
     );
   }
 }
-const Comment = ({ comment }) => {
+const Comment = ({ comment, setCurrentComment }) => {
   const { id, body, author, voteScore, timestamp } = comment;
   return (
-    <li>
+    <li className="list-item">
       <div className="readable-comment">
+        <Vote vote={voteScore} id={id} voteType={VOTE_TYPE.COMMENT} />
+
         <h5>
           <strong>{author}</strong>{' '}
-          <Vote vote={voteScore} id={id} voteType={VOTE_TYPE.COMMENT} />
+          <button
+            className="btn-edit-comment btn btn-link"
+            onClick={setCurrentComment}
+            type="button"
+          >
+            Edit
+          </button>
         </h5>
-        <p className="body">{body}</p>
+        <pre className="body">{body}</pre>
       </div>
     </li>
   );
