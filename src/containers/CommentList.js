@@ -89,7 +89,7 @@ class CommentList extends Component {
   }
 }
 const Comment = ({ comment, setCurrentComment }) => {
-  const { id, body, author, voteScore, timestamp } = comment;
+  const { id, body, author, voteScore } = comment;
   return (
     <li className="list-item">
       <div className="readable-comment">

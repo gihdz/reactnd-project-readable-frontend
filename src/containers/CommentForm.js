@@ -1,5 +1,4 @@
 import React from 'react';
-import Select from 'react-select';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
@@ -21,13 +20,9 @@ class CommentForm extends React.Component {
       values,
       touched,
       errors,
-      dirty,
       isSubmitting,
       handleChange,
-      handleBlur,
       handleSubmit,
-      handleReset,
-      handleSelectChange
     } = this.props;
 
     const { id, author, body, postId } = values;

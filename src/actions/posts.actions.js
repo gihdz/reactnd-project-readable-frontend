@@ -8,7 +8,7 @@ export const getPosts = (category = 'all', successCb) => {
         type: actions.GET_POSTS,
         posts
       });
-      if (successCb) successCb();
+      if (successCb) successCb(posts);
     });
   };
 };

@@ -100,7 +100,6 @@ button.outline {
   cursor: pointer;
 }
 .comment-vote-buttons {
-  /* display: inline-block; */
   float: right;
 }
 .comment-vote-buttons.vote-loading {
@@ -111,4 +110,13 @@ button.outline {
   width: 70px;
   font-weight: 900;
   font-size: 24px;
+}
+.sort-icon-container {
+  position: absolute;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.vote-container {
+  margin-right: 15px;
 }

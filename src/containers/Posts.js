@@ -5,34 +5,152 @@ import * as postActions from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
 import Vote from './Vote';
 import { VOTE_TYPE } from '../utils/constants';
+import sortBy from 'sort-by';
+
+const SORT_TYPE = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+  NONE: 'NONE'
+};
+const SORT = {
+  NONE: 0,
+  ASC: 1,
+  DESC: 2
+};
+const SORT_SEQUENCE = {
+  [SORT.NONE]: SORT_TYPE.NONE,
+  [SORT.ASC]: SORT_TYPE.ASC,
+  [SORT.DESC]: SORT_TYPE.DESC
+};
+const SORT_ICON = {
+  ASC: 'arrow_drop_up',
+  DESC: 'arrow_drop_down',
+  NONE: 'remove'
+};
+const SORT_SIGN = {
+  ASC: '',
+  DESC: '-'
+};
 
 class Posts extends React.Component {
   state = {
-    loading: true
+    loading: true,
+    posts: [],
+    voteScoreSort: SORT.NONE,
+    dateSort: SORT.DESC
   };
   componentDidMount() {
     const { getPosts } = this.props;
-    getPosts('all', () => {
-      this.setState({ loading: false });
+    getPosts('all', posts => {
+      this.setState(
+        {
+          loading: false,
+          posts
+        },
+        this.sortPosts
+      );
     });
+  }
+  sortPosts() {
+    let { posts, voteScoreSort, dateSort } = this.state;
+
+    let voteTypes = [];
+    if (voteScoreSort)
+      voteTypes = voteTypes.concat(
+        `${SORT_SIGN[SORT_SEQUENCE[voteScoreSort]]}voteScore`
+      );
+    else if (dateSort)
+      voteTypes = voteTypes.concat(
+        `${SORT_SIGN[SORT_SEQUENCE[dateSort]]}timestamp`
+      );
+
+    posts.sort(sortBy(...voteTypes));
+
+    this.setState({
+      posts
+    });
+  }
+  getNextSortType(voteScore) {
+    if (voteScore < Object.keys(SORT_SEQUENCE).length - 1) return voteScore + 1;
+    else return 1;
+  }
+  sortVoteScore = () => {
+    let { voteScoreSort } = this.state;
+    voteScoreSort = this.getNextSortType(voteScoreSort);
+    this.setState(
+      {
+        voteScoreSort,
+        dateSort: 0
+      },
+      this.sortPosts
+    );
+  };
+  sortTimestamp = () => {
+    let { dateSort } = this.state;
+    dateSort = this.getNextSortType(dateSort);
+
+    this.setState(
+      {
+        dateSort,
+        voteScoreSort: 0
+      },
+      this.sortPosts
+    );
+  };
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        posts: nextProps.posts
+      },
+      this.sortPosts
+    );
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading, posts, voteScoreSort, dateSort } = this.state;
     if (loading) return <Loading />;
-    const posts = this.props.posts.map(post => (
-      <PostRow key={post.id} post={post} />
-    ));
+    const postRows = posts.map(post => <PostRow key={post.id} post={post} />);
+
+    const voteScoreArrow = SORT_ICON[SORT_SEQUENCE[voteScoreSort]];
+    const dateArrow = SORT_ICON[SORT_SEQUENCE[dateSort]];
     return (
       <div className="table-responsive">
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>info</th>
+              <th> info </th>
+              <th>
+                <div className="vote-container">
+                  <span>
+                    vote score
+                    <button
+                      className="sort-icon-container"
+                      onClick={this.sortVoteScore}>
+                      <i className="material-icons">{voteScoreArrow}</i>
+                    </button>
+                  </span>
+                </div>
+              </th>
+              <th>
+                <div className="vote-container">
+                  timestamp
+                  <span>
+                    <button
+                      className="sort-icon-container"
+                      onClick={this.sortTimestamp}>
+                      <i
+                        onClick={this.sortTimestamp}
+                        className="material-icons sort-icons">
+                        {dateArrow}
+                      </i>
+                    </button>
+                  </span>
+                </div>
+              </th>
               <th>actions</th>
             </tr>
           </thead>
-          <tbody>{posts}</tbody>
+          <tbody>{postRows}</tbody>
         </table>
       </div>
     );
@@ -45,38 +163,42 @@ const PostRow = ({ post }) => {
     title,
     body,
     author,
-    category,
-    voteScore,
-    deleted
+    voteScore
   } = post;
   const date = new Date(timestamp).toLocaleDateString();
 
   return (
     <tr>
       <td>
-        <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
         <div>
-          <div>Title:</div>
-          <Link to={`/viewPost/${id}`}>{title}</Link>
+          <div> Title:</div>
+          <Link
+            to={`/viewPost/${id}`}>
+            {title}
+          </Link>
         </div>
         <div>
           <strong>
-            Author: <span>{author}</span>
-          </strong>
-          ,{' '}
-          <strong>
-            Date: <span>{date}</span>
+            Author:<span> {author}</span>
           </strong>
         </div>
         <div>
           <div>Body:</div>
-          <Link to={`/viewPost/${id}`}>
-            <pre>{body}</pre>
+          <Link
+            to={`/viewPost/${id}`}>
+            <pre> {body} </pre>
           </Link>
         </div>
       </td>
       <td>
-        <Link to={`/post/${id}`}>Edit Post</Link>
+        <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
+      </td>
+      <td> {date} </td>
+      <td>
+        <Link
+          to={`/post/${id}`}>
+          Edit Post
+        </Link>
       </td>
     </tr>
   );

@@ -90,7 +90,7 @@ export function createPost(title, body, author, category) {
     body,
     author,
     category,
-    voteScore: 1,
+    voteScore: 0,
     deleted: false,
     timestamp: Date.now()
   };
@@ -167,7 +167,7 @@ export function createComment(postId, author, body) {
     parentId: postId,
     body,
     author,
-    voteScore: 1,
+    voteScore: 0,
     deleted: false,
     parentDeleted: false,
     timestamp: Date.now()

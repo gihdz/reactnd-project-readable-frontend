@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { NotificationContainer } from 'react-notifications';
 
-import logo from './logo.svg';
 import './App.css';
 import Nav from './containers/Nav';
 class Layout extends Component {
