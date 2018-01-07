@@ -1,11 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, } from 'react-router-dom';
 import * as postActions from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
 import Vote from './Vote';
 import { VOTE_TYPE } from '../utils/constants';
 import sortBy from 'sort-by';
+import { erasePost } from '../utils/api';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 const SORT_TYPE = {
   ASC: 'ASC',
@@ -22,6 +25,8 @@ const SORT_SEQUENCE = {
   [SORT.ASC]: SORT_TYPE.ASC,
   [SORT.DESC]: SORT_TYPE.DESC
 };
+const SORT_SEQUENCE_LENGTH = Object.keys(SORT_SEQUENCE).length;
+
 const SORT_ICON = {
   ASC: 'arrow_drop_up',
   DESC: 'arrow_drop_down',
@@ -39,7 +44,7 @@ class Posts extends React.Component {
     voteScoreSort: SORT.NONE,
     dateSort: SORT.DESC
   };
-  componentDidMount() {
+  getPosts() {
     const { getPosts } = this.props;
     getPosts('all', posts => {
       this.setState(
@@ -50,6 +55,9 @@ class Posts extends React.Component {
         this.sortPosts
       );
     });
+  }
+  componentDidMount() {
+    this.getPosts();
   }
   sortPosts() {
     let { posts, voteScoreSort, dateSort } = this.state;
@@ -71,7 +79,7 @@ class Posts extends React.Component {
     });
   }
   getNextSortType(voteScore) {
-    if (voteScore < Object.keys(SORT_SEQUENCE).length - 1) return voteScore + 1;
+    if (voteScore < SORT_SEQUENCE_LENGTH - 1) return voteScore + 1;
     else return 1;
   }
   sortVoteScore = () => {
@@ -105,11 +113,20 @@ class Posts extends React.Component {
       this.sortPosts
     );
   }
+  deletePost = (postId) => {
+    this.setState({ loading: true }, () => {
+      erasePost(postId).then(r => {
+        if (r && r.id) this.getPosts();
+      })
+    })
+
+
+  }
 
   render() {
     const { loading, posts, voteScoreSort, dateSort } = this.state;
     if (loading) return <Loading />;
-    const postRows = posts.map(post => <PostRow key={post.id} post={post} />);
+    const postRows = posts.map(post => <PostRow deletePost={() => this.deletePost(post.id)} key={post.id} post={post} />);
 
     const voteScoreArrow = SORT_ICON[SORT_SEQUENCE[voteScoreSort]];
     const dateArrow = SORT_ICON[SORT_SEQUENCE[dateSort]];
@@ -156,52 +173,71 @@ class Posts extends React.Component {
     );
   }
 }
-const PostRow = ({ post }) => {
-  const {
-    id,
-    timestamp,
-    title,
-    body,
-    author,
-    voteScore
-  } = post;
-  const date = new Date(timestamp).toLocaleDateString();
+class PostRow extends React.Component {
+  deleteWarning = () => {
+    confirmAlert({
+      title: 'Confirm delete',                        // Title dialog
+      message: 'Are you sure to delete this post?',               // Message dialog
+      // childrenElement: () => <div>Custom UI</div>,       // Custom UI or Component
+      confirmLabel: 'Confirm',                           // Text button confirm
+      cancelLabel: 'Cancel',                             // Text button cancel
+      onConfirm: () => {
+        const { deletePost } = this.props;
+        deletePost();
+      },    // Action after Confirm
+      onCancel: () => { },      // Action after Cancel
+    })
 
-  return (
-    <tr>
-      <td>
-        <div>
-          <div> Title:</div>
+  }
+  render() {
+    const { post } = this.props;
+    const {
+    id,
+      timestamp,
+      title,
+      body,
+      author,
+      voteScore
+  } = post;
+    const date = new Date(timestamp).toLocaleDateString();
+
+    return (
+      <tr>
+        <td>
+          <div>
+            <div> Title:</div>
+            <Link
+              to={`/viewPost/${id}`}>
+              {title}
+            </Link>
+          </div>
+          <div>
+            <strong>
+              Author:<span> {author}</span>
+            </strong>
+          </div>
+          <div>
+            <div>Body:</div>
+            <Link
+              to={`/viewPost/${id}`}>
+              <pre> {body} </pre>
+            </Link>
+          </div>
+        </td>
+        <td>
+          <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
+        </td>
+        <td> {date} </td>
+        <td>
           <Link
-            to={`/viewPost/${id}`}>
-            {title}
-          </Link>
-        </div>
-        <div>
-          <strong>
-            Author:<span> {author}</span>
-          </strong>
-        </div>
-        <div>
-          <div>Body:</div>
-          <Link
-            to={`/viewPost/${id}`}>
-            <pre> {body} </pre>
-          </Link>
-        </div>
-      </td>
-      <td>
-        <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
-      </td>
-      <td> {date} </td>
-      <td>
-        <Link
-          to={`/post/${id}`}>
-          Edit Post
+            to={`/post/${id}`}>
+            Edit Post
         </Link>
-      </td>
-    </tr>
-  );
+          <button className="btn btn-link" onClick={this.deleteWarning}>Delete</button>
+        </td>
+      </tr>
+    );
+  }
 };
 
 const mapStateToProps = ({ categoryState, postState }, ownProps) => {

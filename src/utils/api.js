@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-// const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
-const apiUrl = 'http://localhost:3001';
+const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
+// const apiUrl = 'http://localhost:3001';
 
 const getUrl = path => {
   return `${apiUrl}/${path}`;
@@ -13,6 +13,7 @@ const apiUrls = {
   voteComment: commentId => getUrl(`comments/${commentId}`),
   votePost: postId => getUrl(`posts/${postId}`),
   editPost: postId => getUrl(`posts/${postId}`),
+  deletePost: postId => getUrl(`posts/${postId}`),
   editComment: postId => getUrl(`comments/${postId}`),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
@@ -30,7 +31,8 @@ const {
   votePost,
   editPost,
   editComment,
-  getCommentById
+  getCommentById,
+  deletePost,
 } = apiUrls;
 
 const authorizationToken = 'GiancarlosReadablev1';
@@ -232,6 +234,22 @@ export function voteForPost(postId, vote) {
     .then(res => res.json())
     .then(res => {
       console.log('Post vote result: ', res);
+      return res;
+    });
+}
+export function erasePost(postId) {
+
+  const headers = new Headers(myInit.headers);
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'DELETE'
+  };
+  return fetch(deletePost(postId), init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Deleted post: ', res);
       return res;
     });
 }
