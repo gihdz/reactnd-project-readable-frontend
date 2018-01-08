@@ -9,6 +9,7 @@ import sortBy from 'sort-by';
 import { erasePost } from '../utils/api';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+import ReactTooltip from 'react-tooltip'
 
 const SORT_TYPE = {
   ASC: 'ASC',
@@ -119,8 +120,6 @@ class Posts extends React.Component {
         if (r && r.id) this.getPosts();
       })
     })
-
-
   }
 
   render() {
@@ -164,17 +163,20 @@ class Posts extends React.Component {
                   </span>
                 </div>
               </th>
+              <th>category</th>
               <th>actions</th>
             </tr>
           </thead>
           <tbody>{postRows}</tbody>
         </table>
+        <ReactTooltip />
       </div>
     );
   }
 }
 class PostRow extends React.Component {
-  deleteWarning = () => {
+  deleteWarning = (e) => {
+    e.preventDefault();
     confirmAlert({
       title: 'Confirm delete',                        // Title dialog
       message: 'Are you sure to delete this post?',               // Message dialog
@@ -197,7 +199,8 @@ class PostRow extends React.Component {
       title,
       body,
       author,
-      voteScore
+      voteScore,
+      category
   } = post;
     const date = new Date(timestamp).toLocaleDateString();
 
@@ -228,12 +231,18 @@ class PostRow extends React.Component {
           <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
         </td>
         <td> {date} </td>
+        <td>{category}</td>
+
         <td>
-          <Link
-            to={`/post/${id}`}>
-            Edit Post
-        </Link>
-          <button className="btn btn-link" onClick={this.deleteWarning}>Delete</button>
+          <div className="action-group">
+            <Link data-tip="Edit Post"
+              to={`/post/${id}`}>
+              <i className="material-icons">mode_edit</i>
+            </Link>
+            <a data-tip="Delete Post" href="#delete-post" onClick={this.deleteWarning}>
+              <i className="material-icons">remove_circle</i>
+            </a>
+          </div>
         </td>
       </tr>
     );

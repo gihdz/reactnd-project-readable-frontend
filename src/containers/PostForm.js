@@ -141,7 +141,7 @@ const EnhancedForm = withFormik({
   handleSubmit: (values, { setSubmitting }) => {
     const { id, title, body, author, category, history } = values;
     if (!id)
-      createPost(title, body, author, category.value).then(p => {
+      createPost(title, body, author, category).then(p => {
         if (p && p.id) {
           NotificationManager.success('Post created successfully');
           history.push('/');
