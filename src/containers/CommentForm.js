@@ -1,13 +1,13 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import { withFormik } from 'formik';
 import Yup from 'yup';
 import { fetchCommentById } from '../utils/api';
 
-import * as commentsActions from '../actions/comments.actions';
 import { createComment, updateComment } from '../utils/api';
+
+import Loading from 'react-loading-animation';
 
 class CommentForm extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -22,7 +22,7 @@ class CommentForm extends React.Component {
       errors,
       isSubmitting,
       handleChange,
-      handleSubmit,
+      handleSubmit
     } = this.props;
 
     const { id, author, body, postId } = values;
@@ -97,20 +97,20 @@ const EnhancedForm = withFormik({
   }),
   handleSubmit: (values, { props }) => {
     const { id, body, author, postId } = values;
-    const { hideCommentFormModal, getComments } = props;
+    const { hideCommentFormModal } = props;
 
     if (!id) {
       createComment(postId, author, body).then(d => {
         if (d && d.id) {
           NotificationManager.success('Comment created successfully');
-          getComments(postId, hideCommentFormModal);
+          hideCommentFormModal();
         }
       });
     } else {
       updateComment(id, body).then(d => {
         if (d && d.id) {
           NotificationManager.success('Comment updated successfully');
-          getComments(postId, hideCommentFormModal);
+          hideCommentFormModal();
         }
       });
     }
@@ -122,20 +122,25 @@ class FormContainer extends React.Component {
     formTitle: '',
     id: '',
     author: '',
-    body: ''
+    body: '',
+    loading: true
   };
   componentDidMount() {
     const { commentId } = this.props;
     if (commentId)
       fetchCommentById(commentId).then(r => {
         if (r && r.id) {
-          this.setState({ ...r, formTitle: 'Edit Comment' });
+          this.setState({ ...r, formTitle: 'Edit Comment', loading: false });
         }
       });
-    else this.setState({ formTitle: 'New Comment' });
+    else this.setState({ formTitle: 'New Comment', loading: false });
   }
   render() {
-    const { postId, hideCommentFormModal, getComments } = this.props;
+    const { loading } = this.state;
+
+    if (loading) return <Loading />;
+
+    const { postId, hideCommentFormModal } = this.props;
 
     const { formTitle, id, author, body } = this.state;
 
@@ -149,17 +154,10 @@ class FormContainer extends React.Component {
           id={id}
           postId={postId}
           hideCommentFormModal={hideCommentFormModal}
-          getComments={getComments}
         />
       </div>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    getComments: (postId, cb) =>
-      dispatch(commentsActions.getComments(postId, cb))
-  };
-};
-export default connect(null, mapDispatchToProps)(FormContainer);
+export default FormContainer;

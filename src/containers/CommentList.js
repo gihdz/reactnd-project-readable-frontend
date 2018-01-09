@@ -3,12 +3,17 @@ import { connect } from 'react-redux';
 import propTypes from 'prop-types';
 import Loading from 'react-loading-animation';
 import ReactModal from 'react-modal';
+import ReactTooltip from 'react-tooltip';
 
 import * as commentActions from '../actions/comments.actions';
 import { VOTE_TYPE } from '../utils/constants';
 
 import CommentForm from './CommentForm';
 import Vote from './Vote';
+
+import { eraseComment } from '../utils/api';
+import ConfirmAlert from '../utils/ConfirmAlert';
+
 class CommentList extends Component {
   state = {
     loading: true,
@@ -16,19 +21,36 @@ class CommentList extends Component {
     currentComment: ''
   };
   componentDidMount() {
-    const { postId } = this.props;
-    this.props.getComments(postId, () => {
-      this.setState({ loading: false });
-    });
+    this.getComments();
   }
+  getComments = () => {
+    this.setState({ loading: true }, () => {
+      const { postId } = this.props;
+      this.props.getComments(postId, () => {
+        this.setState({ loading: false });
+      });
+    });
+  };
   setCurrentComment = currentComment => {
     this.setState({ currentComment, isModalOpen: true });
   };
   showCommentFormModal = () => {
     this.setState({ isModalOpen: true });
   };
-  hideCommentFormModal = () => {
-    this.setState({ isModalOpen: false, currentComment: '' });
+  hideCommentFormModal = (cb = null) => {
+    this.setState({ isModalOpen: false, currentComment: '' }, () => {
+      if (cb && typeof cb === 'function') cb();
+    });
+  };
+  hideModalAndGetComments = () => {
+    this.hideCommentFormModal(this.getComments);
+  };
+  deleteComment = commentId => {
+    this.setState({ loading: true }, () => {
+      eraseComment(commentId).then(r => {
+        if (r && r.id) this.getComments();
+      });
+    });
   };
   render() {
     const { loading, isModalOpen, currentComment } = this.state;
@@ -43,6 +65,7 @@ class CommentList extends Component {
         key={c.id}
         comment={c}
         setCurrentComment={() => this.setCurrentComment(c.id)}
+        deleteComment={() => this.deleteComment(c.id)}
       />
     ));
 
@@ -58,7 +81,7 @@ class CommentList extends Component {
           </button>
         </div>
         <hr />
-        <ul className="list">{commentsLi} </ul>
+        <ul className="list-group">{commentsLi} </ul>
         <ReactModal
           isOpen={isModalOpen}
           shouldCloseOnEsc={true}
@@ -79,37 +102,62 @@ class CommentList extends Component {
 
             <CommentForm
               postId={postId}
-              hideCommentFormModal={this.hideCommentFormModal}
+              hideCommentFormModal={this.hideModalAndGetComments}
               commentId={currentComment}
             />
           </div>
         </ReactModal>
+        <ReactTooltip />
       </div>
     );
   }
 }
-const Comment = ({ comment, setCurrentComment }) => {
-  const { id, body, author, voteScore } = comment;
-  return (
-    <li className="list-item">
-      <div className="readable-comment">
-        <Vote vote={voteScore} id={id} voteType={VOTE_TYPE.COMMENT} />
+class Comment extends React.Component {
+  deleteWarning = e => {
+    e.preventDefault();
 
-        <h5>
-          <strong>{author}</strong>{' '}
-          <button
-            className="btn-edit-comment btn btn-link"
-            onClick={setCurrentComment}
-            type="button"
-          >
-            Edit
-          </button>
-        </h5>
-        <pre className="body">{body}</pre>
-      </div>
-    </li>
-  );
-};
+    ConfirmAlert(
+      'Confirm Delete',
+      'Sure you want to delete this comment?',
+      () => {
+        const { deleteComment } = this.props;
+        deleteComment();
+      }
+    );
+  };
+  render() {
+    const { comment, setCurrentComment } = this.props;
+    const { id, body, author, voteScore } = comment;
+    return (
+      <li className="list-group-item">
+        <div className="readable-comment">
+          <Vote vote={voteScore} id={id} voteType={VOTE_TYPE.COMMENT} />
+
+          <h5>
+            <strong>{author}</strong>{' '}
+            <button
+              className="btn-edit-comment btn btn-link"
+              onClick={setCurrentComment}
+              type="button"
+              data-tip="Edit Comment"
+            >
+              <i className="material-icons">mode_edit</i>
+            </button>
+            <button
+              className="btn-delete-comment btn btn-link"
+              onClick={this.deleteWarning}
+              type="button"
+              data-tip="Delete Comment"
+            >
+              <i className="material-icons">remove_circle</i>
+            </button>
+          </h5>
+          <pre className="body">{body}</pre>
+        </div>
+      </li>
+    );
+  }
+}
 /* Comment fields
 id	String	Unique identifier
 parentId	String	id of the parent post

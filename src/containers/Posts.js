@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import * as postActions from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
 import Vote from './Vote';
 import { VOTE_TYPE } from '../utils/constants';
 import sortBy from 'sort-by';
 import { erasePost } from '../utils/api';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
-import ReactTooltip from 'react-tooltip'
+import ReactTooltip from 'react-tooltip';
+import ConfirmAlert from '../utils/ConfirmAlert';
 
 const SORT_TYPE = {
   ASC: 'ASC',
@@ -114,18 +113,24 @@ class Posts extends React.Component {
       this.sortPosts
     );
   }
-  deletePost = (postId) => {
+  deletePost = postId => {
     this.setState({ loading: true }, () => {
       erasePost(postId).then(r => {
         if (r && r.id) this.getPosts();
-      })
-    })
-  }
+      });
+    });
+  };
 
   render() {
     const { loading, posts, voteScoreSort, dateSort } = this.state;
     if (loading) return <Loading />;
-    const postRows = posts.map(post => <PostRow deletePost={() => this.deletePost(post.id)} key={post.id} post={post} />);
+    const postRows = posts.map(post => (
+      <PostRow
+        deletePost={() => this.deletePost(post.id)}
+        key={post.id}
+        post={post}
+      />
+    ));
 
     const voteScoreArrow = SORT_ICON[SORT_SEQUENCE[voteScoreSort]];
     const dateArrow = SORT_ICON[SORT_SEQUENCE[dateSort]];
@@ -141,7 +146,8 @@ class Posts extends React.Component {
                     vote score
                     <button
                       className="sort-icon-container"
-                      onClick={this.sortVoteScore}>
+                      onClick={this.sortVoteScore}
+                    >
                       <i className="material-icons">{voteScoreArrow}</i>
                     </button>
                   </span>
@@ -153,10 +159,12 @@ class Posts extends React.Component {
                   <span>
                     <button
                       className="sort-icon-container"
-                      onClick={this.sortTimestamp}>
+                      onClick={this.sortTimestamp}
+                    >
                       <i
                         onClick={this.sortTimestamp}
-                        className="material-icons sort-icons">
+                        className="material-icons sort-icons"
+                      >
                         {dateArrow}
                       </i>
                     </button>
@@ -175,33 +183,25 @@ class Posts extends React.Component {
   }
 }
 class PostRow extends React.Component {
-  deleteWarning = (e) => {
+  deleteWarning = e => {
     e.preventDefault();
-    confirmAlert({
-      title: 'Confirm delete',                        // Title dialog
-      message: 'Are you sure to delete this post?',               // Message dialog
-      // childrenElement: () => <div>Custom UI</div>,       // Custom UI or Component
-      confirmLabel: 'Confirm',                           // Text button confirm
-      cancelLabel: 'Cancel',                             // Text button cancel
-      onConfirm: () => {
-        const { deletePost } = this.props;
-        deletePost();
-      },    // Action after Confirm
-      onCancel: () => { },      // Action after Cancel
-    })
-
-  }
+    ConfirmAlert('Confirm Delete', 'Are you sure to delete this post?', () => {
+      const { deletePost } = this.props;
+      deletePost();
+    });
+  };
   render() {
     const { post } = this.props;
     const {
-    id,
+      id,
       timestamp,
       title,
       body,
       author,
       voteScore,
-      category
-  } = post;
+      category,
+      commentCount
+    } = post;
     const date = new Date(timestamp).toLocaleDateString();
 
     return (
@@ -209,10 +209,7 @@ class PostRow extends React.Component {
         <td>
           <div>
             <div> Title:</div>
-            <Link
-              to={`/viewPost/${id}`}>
-              {title}
-            </Link>
+            <Link to={`/viewPost/${id}`}>{title}</Link>
           </div>
           <div>
             <strong>
@@ -220,9 +217,12 @@ class PostRow extends React.Component {
             </strong>
           </div>
           <div>
+            <span>Comments count: </span>
+            <strong>{commentCount}</strong>
+          </div>
+          <div>
             <div>Body:</div>
-            <Link
-              to={`/viewPost/${id}`}>
+            <Link to={`/viewPost/${id}`}>
               <pre> {body} </pre>
             </Link>
           </div>
@@ -235,11 +235,14 @@ class PostRow extends React.Component {
 
         <td>
           <div className="action-group">
-            <Link data-tip="Edit Post"
-              to={`/post/${id}`}>
+            <Link data-tip="Edit Post" to={`/post/${id}`}>
               <i className="material-icons">mode_edit</i>
             </Link>
-            <a data-tip="Delete Post" href="#delete-post" onClick={this.deleteWarning}>
+            <a
+              data-tip="Delete Post"
+              href="#delete-post"
+              onClick={this.deleteWarning}
+            >
               <i className="material-icons">remove_circle</i>
             </a>
           </div>
@@ -247,7 +250,7 @@ class PostRow extends React.Component {
       </tr>
     );
   }
-};
+}
 
 const mapStateToProps = ({ categoryState, postState }, ownProps) => {
   return {

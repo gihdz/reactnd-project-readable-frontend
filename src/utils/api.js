@@ -15,6 +15,7 @@ const apiUrls = {
   editPost: postId => getUrl(`posts/${postId}`),
   deletePost: postId => getUrl(`posts/${postId}`),
   editComment: postId => getUrl(`comments/${postId}`),
+  deleteComment: commentId => getUrl(`comments/${commentId}`),
   getPostById: postId => getUrl(`posts/${postId}`),
   getPostsByCategory: category => getUrl(`${category}/posts`),
   getCommentsByPost: postId => getUrl(`posts/${postId}/comments`)
@@ -33,6 +34,7 @@ const {
   editComment,
   getCommentById,
   deletePost,
+  deleteComment
 } = apiUrls;
 
 const authorizationToken = 'GiancarlosReadablev1';
@@ -238,7 +240,6 @@ export function voteForPost(postId, vote) {
     });
 }
 export function erasePost(postId) {
-
   const headers = new Headers(myInit.headers);
 
   const init = {
@@ -250,6 +251,21 @@ export function erasePost(postId) {
     .then(res => res.json())
     .then(res => {
       console.log('Deleted post: ', res);
+      return res;
+    });
+}
+export function eraseComment(commentId) {
+  const headers = new Headers(myInit.headers);
+
+  const init = {
+    ...myInit,
+    headers,
+    method: 'DELETE'
+  };
+  return fetch(deleteComment(commentId), init)
+    .then(res => res.json())
+    .then(res => {
+      console.log('Deleted comment: ', res);
       return res;
     });
 }

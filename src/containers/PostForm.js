@@ -6,7 +6,7 @@ import { NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import { withFormik } from 'formik';
 import Yup from 'yup';
-
+import Loading from 'react-loading-animation';
 class MyPostForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (
@@ -23,7 +23,7 @@ class MyPostForm extends React.Component {
       errors,
       isSubmitting,
       handleChange,
-      handleSubmit,
+      handleSubmit
     } = this.props;
 
     const { id, title, author, body, category, categories } = values;
@@ -165,7 +165,8 @@ class FormContainer extends React.Component {
     title: '',
     author: '',
     body: '',
-    category: ''
+    category: '',
+    loading: true
   };
   componentDidMount() {
     const { postId } = this.props.match.params;
@@ -173,14 +174,21 @@ class FormContainer extends React.Component {
       fetchPostById(postId).then(r => {
         if (r && r.id) {
           this.setState(
-            { ...r, formTitle: 'Edit Post' },
+            { ...r, formTitle: 'Edit Post', loading: false },
             this.props.getCategories
           );
         }
       });
-    else this.setState({ formTitle: 'New Post' }, this.props.getCategories);
+    else
+      this.setState(
+        { formTitle: 'New Post', loading: false },
+        this.props.getCategories
+      );
   }
   render() {
+    const { loading } = this.state;
+
+    if (loading) return <Loading />;
     const { categories } = this.props;
     const { id, title, author, body, category, formTitle } = this.state;
 
