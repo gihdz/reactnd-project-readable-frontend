@@ -12,9 +12,9 @@ const Routes = () => {
     <Switch>
       <Route exact path="/:category?" component={RootView} />
       <Route path="/custom" component={CustomComponent} />
-      <Route path="/viewPost/:postId" component={PostView} />
       <Route path="/post/new/" component={PostForm} />
       <Route path="/post/edit/:postId" component={PostForm} />
+      <Route path="/:category/:postId" component={PostView} />
 
       <Route component={NotFound} />
     </Switch>

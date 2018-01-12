@@ -211,7 +211,7 @@ class PostRow extends React.Component {
         <td>
           <div>
             <div> Title:</div>
-            <Link to={`/viewPost/${id}`}>{title}</Link>
+            <Link to={`/${category}/${id}`}>{title}</Link>
           </div>
           <div>
             <strong>
@@ -255,10 +255,11 @@ class PostRow extends React.Component {
 }
 
 const mapStateToProps = ({ categoryState, postState }, ownProps) => {
+  const { posts, loadingPosts } = postState;
   return {
-    posts: postState.posts,
+    posts,
     selectedCategory: categoryState.selectedCategory,
-    loadingPosts: postState.loadingPosts
+    loadingPosts
   };
 };
 export default connect(mapStateToProps, { getPosts })(Posts);

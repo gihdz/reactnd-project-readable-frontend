@@ -1,9 +1,9 @@
 import * as actions from '../constants';
-const categoriesState = {
+const categoryState = {
   selectedCategory: 'all',
   categories: []
 };
-export default function categoriesReducer(state = categoriesState, action) {
+export default function categoriesReducer(state = categoryState, action) {
   switch (action.type) {
     case actions.GET_CATEGORIES:
       return { ...state, categories: [...action.categories] };
