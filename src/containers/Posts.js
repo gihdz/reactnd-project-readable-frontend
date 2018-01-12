@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as postActions from '../actions/posts.actions';
+import { getPosts } from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
 import Vote from './Vote';
 import { VOTE_TYPE } from '../utils/constants';
@@ -45,8 +45,9 @@ class Posts extends React.Component {
     dateSort: SORT.DESC
   };
   getPosts() {
-    const { getPosts } = this.props;
-    getPosts('all', posts => {
+    const { getPosts, category } = this.props;
+    const cat = category || 'all';
+    getPosts(cat, posts => {
       this.setState(
         {
           loading: false,
@@ -123,7 +124,8 @@ class Posts extends React.Component {
 
   render() {
     const { loading, posts, voteScoreSort, dateSort } = this.state;
-    if (loading) return <Loading />;
+    const { loadingPosts } = this.props;
+    if (loading || loadingPosts) return <Loading />;
     const postRows = posts.map(post => (
       <PostRow
         deletePost={() => this.deletePost(post.id)}
@@ -235,7 +237,7 @@ class PostRow extends React.Component {
 
         <td>
           <div className="action-group">
-            <Link data-tip="Edit Post" to={`/post/${id}`}>
+            <Link data-tip="Edit Post" to={`/post/edit/${id}`}>
               <i className="material-icons">mode_edit</i>
             </Link>
             <a
@@ -255,15 +257,11 @@ class PostRow extends React.Component {
 const mapStateToProps = ({ categoryState, postState }, ownProps) => {
   return {
     posts: postState.posts,
-    selectedCategory: categoryState.selectedCategory
+    selectedCategory: categoryState.selectedCategory,
+    loadingPosts: postState.loadingPosts
   };
 };
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    getPosts: (category, cb) => dispatch(postActions.getPosts(category, cb))
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Posts);
+export default connect(mapStateToProps, { getPosts })(Posts);
 
 //Post fields
 // id	String	Unique identifier

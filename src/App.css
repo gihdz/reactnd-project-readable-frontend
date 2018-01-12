@@ -81,9 +81,8 @@ button.outline {
   border-radius: 4px;
   outline: none;
   padding: 20px;
-  height: 100%;
+  height: auto;
   max-width: 600px;
-  max-height: 550px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -120,10 +119,9 @@ button.outline {
 .vote-container {
   margin-right: 15px;
 }
-.action-group > a{
+.action-group > a {
   margin-right: 5px;
-
 }
-.action-group > a:last-child{
+.action-group > a:last-child {
   margin-right: auto;
 }

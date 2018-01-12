@@ -5,15 +5,17 @@ import Posts from './containers/Posts';
 import { Link } from 'react-router-dom';
 class RootView extends React.Component {
   render() {
+    const { category } = this.props.match.params;
+
     return (
       <div>
-        <Link className="btn btn-primary" to="/post">
+        <Link className="btn btn-primary" to="/post/new/">
           Create Post
         </Link>
         <hr />
-        <Categories />
+        <Categories category={category} />
 
-        <Posts />
+        <Posts category={category} />
       </div>
     );
   }

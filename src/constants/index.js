@@ -2,4 +2,5 @@ export const GET_CATEGORIES = 'GET_CATEGORIES';
 export const GET_POSTS = 'GET_POSTS';
 export const GET_POST = 'GET_POST';
 export const GET_POST_COMMENTS = 'GET_POST_COMMENTS';
+export const LOADING_POSTS = 'LOADING_POSTS';
 export const SET_SELECTED_CATEGORY = 'SET_SELECTED_CATEGORY';

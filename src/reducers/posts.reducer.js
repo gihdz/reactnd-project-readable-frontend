@@ -1,19 +1,25 @@
-import * as actions from '../constants';
+import { GET_POSTS, GET_POST, LOADING_POSTS } from '../constants';
 const postState = {
   posts: [],
-  currentPost: null
+  currentPost: null,
+  loadingPosts: false
 };
 export default function postsReducer(state = postState, action) {
   switch (action.type) {
-    case actions.GET_POSTS:
+    case GET_POSTS:
       return {
         ...state,
         posts: action.posts
       };
-    case actions.GET_POST:
+    case GET_POST:
       return {
         ...state,
         currentPost: { ...action.post }
+      };
+    case LOADING_POSTS:
+      return {
+        ...state,
+        loadingPosts: action.loadingPosts
       };
     default:
       return state;
