@@ -8,7 +8,7 @@ export const getComments = (postId, successCb) => {
         type: actions.GET_POST_COMMENTS,
         comments
       });
-      if (successCb) successCb();
+      if (successCb) successCb(comments);
     });
   };
 };

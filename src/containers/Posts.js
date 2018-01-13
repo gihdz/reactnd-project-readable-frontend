@@ -1,14 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { getPosts } from '../actions/posts.actions';
 import Loading from 'react-loading-animation';
-import Vote from './Vote';
-import { VOTE_TYPE } from '../utils/constants';
 import sortBy from 'sort-by';
 import { erasePost } from '../utils/api';
 import ReactTooltip from 'react-tooltip';
-import ConfirmAlert from '../utils/ConfirmAlert';
+import PostRow from './PostRow';
 
 const SORT_TYPE = {
   ASC: 'ASC',
@@ -181,75 +178,6 @@ class Posts extends React.Component {
         </table>
         <ReactTooltip />
       </div>
-    );
-  }
-}
-class PostRow extends React.Component {
-  deleteWarning = e => {
-    e.preventDefault();
-    ConfirmAlert('Confirm Delete', 'Are you sure to delete this post?', () => {
-      const { deletePost } = this.props;
-      deletePost();
-    });
-  };
-  render() {
-    const { post } = this.props;
-    const {
-      id,
-      timestamp,
-      title,
-      body,
-      author,
-      voteScore,
-      category,
-      commentCount
-    } = post;
-    const date = new Date(timestamp).toLocaleDateString();
-
-    return (
-      <tr>
-        <td>
-          <div>
-            <div> Title:</div>
-            <Link to={`/${category}/${id}`}>{title}</Link>
-          </div>
-          <div>
-            <strong>
-              Author:<span> {author}</span>
-            </strong>
-          </div>
-          <div>
-            <span>Comments count: </span>
-            <strong>{commentCount}</strong>
-          </div>
-          <div>
-            <div>Body:</div>
-            <Link to={`/viewPost/${id}`}>
-              <pre> {body} </pre>
-            </Link>
-          </div>
-        </td>
-        <td>
-          <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POSTS} />
-        </td>
-        <td> {date} </td>
-        <td>{category}</td>
-
-        <td>
-          <div className="action-group">
-            <Link data-tip="Edit Post" to={`/post/edit/${id}`}>
-              <i className="material-icons">mode_edit</i>
-            </Link>
-            <a
-              data-tip="Delete Post"
-              href="#delete-post"
-              onClick={this.deleteWarning}
-            >
-              <i className="material-icons">remove_circle</i>
-            </a>
-          </div>
-        </td>
-      </tr>
     );
   }
 }

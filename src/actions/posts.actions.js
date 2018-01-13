@@ -15,11 +15,12 @@ export const getPosts = (category = 'all', successCb) => {
 export const getPost = (postId, successCb = null) => {
   return dispatch => {
     fetchPostById(postId).then(post => {
-      dispatch({
-        type: actions.GET_POST,
-        post
-      });
-      if (successCb) successCb();
+      if (post && post.id)
+        dispatch({
+          type: actions.GET_POST,
+          post
+        });
+      if (successCb) successCb(post);
     });
   };
 };

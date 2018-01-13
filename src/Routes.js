@@ -10,13 +10,13 @@ import PostForm from './containers/PostForm';
 const Routes = () => {
   return (
     <Switch>
-      <Route exact path="/:category?" component={RootView} />
       <Route path="/custom" component={CustomComponent} />
       <Route path="/post/new/" component={PostForm} />
       <Route path="/post/edit/:postId" component={PostForm} />
-      <Route path="/:category/:postId" component={PostView} />
+      <Route exact path="/404" component={NotFound} />
 
-      <Route component={NotFound} />
+      <Route exact path="/:category?" component={RootView} />
+      <Route path="/:category/:postId" component={PostView} />
     </Switch>
   );
 };
