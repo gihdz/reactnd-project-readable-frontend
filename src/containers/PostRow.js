@@ -60,7 +60,12 @@ class PostRow extends React.Component {
         <td>{category}</td>
 
         <td>
-          <EditDelete onEdit={this.onEdit} onDelete={this.onDelete} />
+          <EditDelete
+            editTooltip="Edit Post"
+            deleteTooltip="Delete Post"
+            onEdit={this.onEdit}
+            onDelete={this.onDelete}
+          />
         </td>
       </tr>
     );

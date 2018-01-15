@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as categoriesActions from '../actions/categories.actions';
+import { getCategories } from '../actions/categories.actions';
 import { createPost, fetchPostById, updatePost } from '../utils/api';
 import { NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import { withFormik } from 'formik';
 import Yup from 'yup';
 import Loading from 'react-loading-animation';
+import queryString from 'query-string';
 class MyPostForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (
@@ -129,8 +130,7 @@ const EnhancedForm = withFormik({
     body: props.body,
     author: props.author,
     category: props.category,
-    categories: props.categories,
-    history: props.history
+    categories: props.categories
   }),
   validationSchema: Yup.object().shape({
     title: Yup.string().required('Title is required!'),
@@ -138,20 +138,22 @@ const EnhancedForm = withFormik({
     author: Yup.string().required('Author is required!'),
     category: Yup.string().required('Category is required!')
   }),
-  handleSubmit: (values, { setSubmitting }) => {
-    const { id, title, body, author, category, history } = values;
+  handleSubmit: (values, { setSubmitting, props }) => {
+    const { id, title, body, author, category } = values;
+    const { history, returnPath } = props;
+    const path = returnPath || '/';
     if (!id)
       createPost(title, body, author, category).then(p => {
         if (p && p.id) {
           NotificationManager.success('Post created successfully');
-          history.push('/');
+          history.push(path);
         }
       });
     else
       updatePost(id, title, body).then(p => {
         if (p && p.id) {
           NotificationManager.success('Post edited successfully');
-          history.push('/');
+          history.push(path);
         }
       });
   },
@@ -189,16 +191,16 @@ class FormContainer extends React.Component {
     const { loading } = this.state;
 
     if (loading) return <Loading />;
-    const { categories } = this.props;
+    const { categories, location, history } = this.props;
     const { id, title, author, body, category, formTitle } = this.state;
+
+    const { returnPath } = queryString.parse(location.search);
 
     const filteredCategories = categories.filter(c => c.name !== 'all');
 
     let cat = category;
     if (!cat)
       cat = filteredCategories.length > 0 ? filteredCategories[0].name : '';
-
-    const { history } = this.props;
 
     return (
       <div className="readable-post-form">
@@ -212,126 +214,16 @@ class FormContainer extends React.Component {
           category={cat}
           categories={filteredCategories}
           history={history}
+          returnPath={returnPath}
         />
       </div>
     );
   }
 }
-// class PostForm extends React.Component {
-//   state = {
-//     title: '',
-//     body: '',
-//     author: '',
-//     category: ''
-//   };
-//   constructor(props) {
-//     super(props);
-//     this.handleChange = this.handleChange.bind(this);
-//     this.handleSubmit = this.handleSubmit.bind(this);
-//   }
-//   componentDidMount() {
-//     this.props.getCategories();
-//     this.inputTitle.focus();
-//   }
-//   handleChange(e) {
-//     const target = e.target;
-//     // const value = target.type === 'checkbox' ? target.checked : target.value;
-//     const value = target.value;
-//     const name = target.name;
-
-//     this.setState({
-//       [name]: value
-//     });
-//   }
-//   handleSelectChange = selected => {
-//     this.setState({ category: selected });
-//   };
-//   handleSubmit(e) {
-//     e.preventDefault();
-//     const { title, body, author, category } = this.state;
-//     createPost(title, body, author, category.value).then(p => {
-//       if (p && p.id) {
-//         const { history } = this.props;
-//         NotificationManager.success('Post created successfully');
-//         history.push('/');
-//       }
-//     });
-//   }
-//   render() {
-//     const { title, body, author, category } = this.state;
-
-//     const categories = this.props.categories
-//       .filter(c => c.name !== 'all')
-//       .map(c => {
-//         return { value: c.name, label: c.name };
-//       });
-//     return (
-//       <div className="readable-post-form">
-//         <h3>New Post</h3>
-//         <hr />
-//         <form onSubmit={this.handleSubmit}>
-//           <div className="form-group">
-//             <label htmlFor="title">Title</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               id="title"
-//               name="title"
-//               placeholder="Enter title"
-//               value={title}
-//               onChange={this.handleChange}
-//               ref={input => (this.inputTitle = input)}
-//             />
-//           </div>
-//           <div className="form-group">
-//             <label htmlFor="author">Author</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               id="author"
-//               name="author"
-//               placeholder="Enter author"
-//               value={author}
-//               onChange={this.handleChange}
-//             />
-//           </div>
-//           <div className="form-group">
-//             <label htmlFor="body">Body</label>
-//             <textarea
-//               type="text"
-//               className="form-control readable-post-body"
-//               id="body"
-//               name="body"
-//               value={body}
-//               onChange={this.handleChange}
-//             />
-//           </div>
-//           <div className="form-group">
-//             <label htmlFor="category">Category</label>
-//             <Select
-//               name="category"
-//               value={category}
-//               onChange={this.handleSelectChange}
-//               options={categories}
-//             />
-//           </div>
-//           <button type="submit" className="btn btn-primary">
-//             Submit
-//           </button>
-//         </form>
-//       </div>
-//     );
-//   }
-// }
 const mapStateToProps = ({ categoryState }) => {
   return {
     categories: categoryState.categories
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    getCategories: () => dispatch(categoriesActions.getCategories())
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(FormContainer);
+export default connect(mapStateToProps, { getCategories })(FormContainer);

@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
-// const apiUrl = 'http://localhost:3001';
+// const apiUrl = 'https://reactnd-readable-api.herokuapp.com';
+const apiUrl = 'http://localhost:3001';
 
 const getUrl = path => {
   return `${apiUrl}/${path}`;

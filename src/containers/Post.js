@@ -17,7 +17,8 @@ class Post extends React.Component {
   onEdit = e => {
     e.preventDefault();
     const { post, history } = this.props;
-    history.push(`/post/edit/${post.id}`);
+    const { id, category } = post;
+    history.push(`/post/edit/${id}?returnPath=/${category}/${id}`);
   };
   onDelete = () => {
     this.setState({ loading: true }, () => {
@@ -37,13 +38,18 @@ class Post extends React.Component {
 
     if (loading) return <Loading />;
 
-    const { post, currentPost } = this.props;
+    const { post } = this.props;
 
-    const { title, body, id, voteScore } = currentPost || post;
+    const { title, body, id, voteScore } = post;
 
     return (
       <div className="readable-post">
-        <EditDelete onEdit={this.onEdit} onDelete={this.onDelete} />
+        <EditDelete
+          editTooltip="Edit Post"
+          deleteTooltip="Delete Post"
+          onEdit={this.onEdit}
+          onDelete={this.onDelete}
+        />
         <Vote id={id} vote={voteScore} voteType={VOTE_TYPE.POST} />
         <h4 className="title">{title}</h4>
         <div className="body">
@@ -58,9 +64,4 @@ Post.propTypes = {
   post: PropTypes.object.isRequired
 };
 
-const mapStateToProps = ({ postState }) => {
-  return {
-    currentPost: postState.currentPost
-  };
-};
-export default connect(mapStateToProps, { getPost })(withRouter(Post));
+export default connect(null, { getPost })(withRouter(Post));

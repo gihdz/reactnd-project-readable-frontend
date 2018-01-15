@@ -3,24 +3,29 @@ import { withRouter } from 'react-router-dom';
 import Post from './Post';
 import Comments from './CommentList';
 import Loading from 'react-loading-animation';
-import { fetchPostById } from '../utils/api';
+import { connect } from 'react-redux';
+import { getPost } from '../actions/posts.actions';
 
 class PostView extends React.Component {
   state = {
-    loading: true,
-    post: {}
+    loading: true
   };
+  componentWillReceiveProps(nextProps) {
+    const { post } = nextProps;
+    const { history } = this.props;
+    if (post && post.id) this.setState({ loading: false });
+    else history.push('/404');
+  }
   componentDidMount() {
     const { postId } = this.props.match.params;
-    const { history } = this.props;
-    fetchPostById(postId).then(post => {
-      if (post && post.id) this.setState({ post, loading: false });
-      else history.push('/404');
-    });
+    const { getPost } = this.props;
+    getPost(postId);
   }
   render() {
-    const { loading, post } = this.state;
+    const { loading } = this.state;
     if (loading) return <Loading />;
+
+    const { post } = this.props;
 
     return (
       <div className="readable-post_view">
@@ -31,5 +36,7 @@ class PostView extends React.Component {
     );
   }
 }
-
-export default withRouter(PostView);
+const mapStateToProps = state => ({
+  post: state.postState.currentPost
+});
+export default connect(mapStateToProps, { getPost })(withRouter(PostView));
