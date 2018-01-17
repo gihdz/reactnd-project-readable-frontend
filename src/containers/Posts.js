@@ -42,8 +42,8 @@ class Posts extends React.Component {
     dateSort: SORT.DESC
   };
   getPosts() {
-    const { getPosts, category } = this.props;
-    const cat = category || 'all';
+    const { getPosts, selectedCategory, category } = this.props;
+    const cat = selectedCategory || category;
     getPosts(cat, posts => {
       this.setState(
         {
@@ -121,7 +121,9 @@ class Posts extends React.Component {
 
   render() {
     const { loading, posts, voteScoreSort, dateSort } = this.state;
-    const { loadingPosts } = this.props;
+    const { loadingPosts, category } = this.props;
+    console.log('category from posts', category);
+
     if (loading || loadingPosts) return <Loading />;
     const postRows = posts.map(post => (
       <PostRow
@@ -184,9 +186,10 @@ class Posts extends React.Component {
 
 const mapStateToProps = ({ categoryState, postState }, ownProps) => {
   const { posts, loadingPosts } = postState;
+  const { selectedCategory } = categoryState;
   return {
     posts,
-    selectedCategory: categoryState.selectedCategory,
+    selectedCategory,
     loadingPosts
   };
 };

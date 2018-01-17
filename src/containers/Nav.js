@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Categories from './DdlCategories';
+import DropDownCategories from './DropDownCategories';
 
 export default () => (
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -25,42 +27,9 @@ export default () => (
             Posts
           </Link>
         </li>
-        {/* <li className="nav-item active">
-          <Link to="/post" className="nav-link">
-            New Post
-          </Link>
-        </li> */}
+
+        <DropDownCategories />
         {/* <li className="nav-item">
-          <a className="nav-link" href="#">
-            Link
-          </a>
-        </li>
-        <li className="nav-item dropdown">
-          <a
-            className="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            Dropdown
-          </a>
-          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a className="dropdown-item" href="#">
-              Action
-            </a>
-            <a className="dropdown-item" href="#">
-              Another action
-            </a>
-            <div className="dropdown-divider" />
-            <a className="dropdown-item" href="#">
-              Something else here
-            </a>
-          </div>
-        </li>
-        <li className="nav-item">
           <a className="nav-link disabled" href="#">
             Disabled
           </a>
@@ -73,6 +42,7 @@ export default () => (
           placeholder="Search"
           aria-label="Search"
         />
+
         <button className="btn btn-outline-success my-2 my-sm-0" type="submit">
           Search
         </button>
