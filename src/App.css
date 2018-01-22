@@ -111,7 +111,6 @@ button.outline {
   font-size: 24px;
 }
 .sort-icon-container {
-  position: absolute;
   border: none;
   background: none;
   cursor: pointer;
