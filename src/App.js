@@ -8,11 +8,18 @@ import { setCurrentCategory } from './actions/categories.actions';
 class RootView extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { category } = nextProps.match.params;
+    const { history } = this.props;
+    const { categories } = nextProps;
+
+    const findInCategories = cat => {
+      return cat.name === category;
+    };
+
+    if (category && !categories.find(findInCategories)) history.push('/404');
     this.setCategory(category);
   }
   componentDidMount() {
     const { category } = this.props.match.params;
-
     this.setCategory(category);
   }
   setCategory(category) {
@@ -24,6 +31,8 @@ class RootView extends React.Component {
   }
   render() {
     const { category } = this.props.match.params;
+    const { categories } = this.props;
+    if (categories.length === 0) return false;
     const cat = category || 'all';
     const filterText =
       cat === 'all' ? 'Currently seeing all posts' : `Current category: ${cat}`;
@@ -40,5 +49,12 @@ class RootView extends React.Component {
     );
   }
 }
+const mapStateToProps = ({ categoryState }) => {
+  console.log('categoryState mapstatetoprops', categoryState);
+  const { categories } = categoryState;
+  return {
+    categories
+  };
+};
 
-export default connect(null, { setCurrentCategory })(RootView);
+export default connect(mapStateToProps, { setCurrentCategory })(RootView);
