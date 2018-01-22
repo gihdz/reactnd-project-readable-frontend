@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { getPosts } from '../actions/posts.actions';
+import { setCurrentCategory } from '../actions/categories.actions';
 import Loading from 'react-loading-animation';
 import sortBy from 'sort-by';
 import { erasePost } from '../utils/api';
@@ -41,21 +42,16 @@ class Posts extends React.Component {
     voteScoreSort: SORT.NONE,
     dateSort: SORT.DESC
   };
-  getPosts() {
-    const { getPosts, selectedCategory, category } = this.props;
-    const cat = selectedCategory || category;
-    getPosts(cat, posts => {
-      this.setState(
-        {
-          loading: false,
-          posts
-        },
-        this.sortPosts
-      );
+  getPosts(category) {
+    this.setState({ loading: true }, () => {
+      const { getPosts } = this.props;
+
+      getPosts(category);
     });
   }
   componentDidMount() {
-    this.getPosts();
+    const { category } = this.props;
+    this.getPosts(category);
   }
   sortPosts() {
     let { posts, voteScoreSort, dateSort } = this.state;
@@ -104,25 +100,27 @@ class Posts extends React.Component {
     );
   };
   componentWillReceiveProps(nextProps) {
+    const { posts } = nextProps;
     this.setState(
       {
-        posts: nextProps.posts
+        posts,
+        loading: false
       },
       this.sortPosts
     );
   }
   deletePost = postId => {
+    const { category } = this.props;
     this.setState({ loading: true }, () => {
       erasePost(postId).then(r => {
-        if (r && r.id) this.getPosts();
+        if (r && r.id) this.getPosts(category);
       });
     });
   };
 
   render() {
     const { loading, posts, voteScoreSort, dateSort } = this.state;
-    const { loadingPosts, category } = this.props;
-    console.log('category from posts', category);
+    const { loadingPosts } = this.props;
 
     if (loading || loadingPosts) return <Loading />;
     const postRows = posts.map(post => (
@@ -193,7 +191,9 @@ const mapStateToProps = ({ categoryState, postState }, ownProps) => {
     loadingPosts
   };
 };
-export default connect(mapStateToProps, { getPosts })(Posts);
+export default connect(mapStateToProps, { getPosts, setCurrentCategory })(
+  Posts
+);
 
 //Post fields
 // id	String	Unique identifier

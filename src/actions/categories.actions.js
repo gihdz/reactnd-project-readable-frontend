@@ -1,21 +1,8 @@
-import {
-  GET_POSTS,
-  SET_SELECTED_CATEGORY,
-  GET_CATEGORIES,
-  LOADING_POSTS
-} from '../constants';
-import { fetchCategories, fetchPosts } from '../utils/api';
+import { SET_SELECTED_CATEGORY, GET_CATEGORIES } from '../constants';
+import { fetchCategories } from '../utils/api';
 
 export const setCurrentCategory = selectedCategory => {
   return dispatch => {
-    dispatch({ type: LOADING_POSTS, loadingPosts: true });
-    fetchPosts(selectedCategory).then(posts => {
-      dispatch({
-        type: GET_POSTS,
-        posts
-      });
-      dispatch({ type: LOADING_POSTS, loadingsPosts: false });
-    });
     dispatch({
       type: SET_SELECTED_CATEGORY,
       selectedCategory

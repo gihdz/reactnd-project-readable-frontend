@@ -27,25 +27,27 @@ class Vote extends React.Component {
     } = this.props;
 
     this.setState({ loading: true }, () => {
+      const setLoadingFalse = () => {
+        this.setState({ loading: false });
+      };
       switch (voteType) {
         case VOTE_TYPE.COMMENT:
           voteForComment(id, vote).then(r => {
-            if (r && r.id) getComments(r.parentId);
-            this.setState({ loading: false });
+            if (r && r.id) getComments(r.parentId, setLoadingFalse);
           });
           break;
         case VOTE_TYPE.POST:
         case VOTE_TYPE.POSTS:
           voteForPost(id, vote).then(r => {
             if (r && r.id) {
-              if (voteType === VOTE_TYPE.POST) getPost(id);
-              if (voteType === VOTE_TYPE.POSTS) getPosts(selectedCategory);
-              this.setState({ loading: false });
+              if (voteType === VOTE_TYPE.POST) getPost(id, setLoadingFalse);
+              if (voteType === VOTE_TYPE.POSTS)
+                getPosts(selectedCategory, setLoadingFalse);
             }
           });
           break;
         default:
-          this.setState({ loading: false });
+          setLoadingFalse();
           break;
       }
     });

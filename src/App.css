@@ -125,3 +125,6 @@ button.outline {
 .action-group > a:last-child {
   margin-right: auto;
 }
+.filter-text {
+  margin-top: 10px;
+}
