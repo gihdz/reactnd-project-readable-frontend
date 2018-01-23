@@ -23,6 +23,7 @@ nav {
 .container {
   margin-top: 30px;
   margin-bottom: 30px;
+  max-width: 1280px;
 }
 .root-select-category {
   margin-left: auto;

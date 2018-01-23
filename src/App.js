@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Loading from 'react-loading-animation';
 
 import Posts from './containers/Posts';
 
@@ -32,7 +33,7 @@ class RootView extends React.Component {
   render() {
     const { category } = this.props.match.params;
     const { categories } = this.props;
-    if (categories.length === 0) return false;
+    if (categories.length === 0) return <Loading />;
     const cat = category || 'all';
     const filterText =
       cat === 'all' ? 'Currently seeing all posts' : `Current category: ${cat}`;
@@ -50,7 +51,6 @@ class RootView extends React.Component {
   }
 }
 const mapStateToProps = ({ categoryState }) => {
-  console.log('categoryState mapstatetoprops', categoryState);
   const { categories } = categoryState;
   return {
     categories
