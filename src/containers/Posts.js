@@ -141,33 +141,41 @@ class Posts extends React.Component {
               <th> info </th>
               <th>
                 <div className="vote-container">
-                  <span>
-                    vote score
-                    <button
-                      className="sort-icon-container"
-                      onClick={this.sortVoteScore}
-                    >
-                      <i className="material-icons">{voteScoreArrow}</i>
-                    </button>
-                  </span>
+                  <div className="vote-row">
+                    <div>
+                      <span> vote score</span>
+                    </div>
+                    <div>
+                      <button
+                        className="sort-icon-container"
+                        onClick={this.sortVoteScore}
+                      >
+                        <i className="material-icons">{voteScoreArrow}</i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </th>
               <th>
                 <div className="vote-container">
-                  timestamp
-                  <span>
-                    <button
-                      className="sort-icon-container"
-                      onClick={this.sortTimestamp}
-                    >
-                      <i
+                  <div className="vote-row">
+                    <div>
+                      <span>timestamp</span>
+                    </div>
+                    <div>
+                      <button
+                        className="sort-icon-container"
                         onClick={this.sortTimestamp}
-                        className="material-icons sort-icons"
                       >
-                        {dateArrow}
-                      </i>
-                    </button>
-                  </span>
+                        <i
+                          onClick={this.sortTimestamp}
+                          className="material-icons sort-icons"
+                        >
+                          {dateArrow}
+                        </i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </th>
               <th>category</th>

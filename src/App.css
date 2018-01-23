@@ -114,9 +114,25 @@ button.outline {
   border: none;
   background: none;
   cursor: pointer;
+  border-radius: 50%;
+  padding-top: 9px;
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
 }
 .vote-container {
   margin-right: 15px;
+  display: table;
+  width: 100%;
+}
+.vote-container .vote-row {
+  display: table-row;
+}
+.vote-container .vote-row div:first-child {
+  vertical-align: middle;
+}
+.vote-container .vote-row div {
+  display: table-cell;
 }
 .action-group > a {
   margin-right: 5px;
